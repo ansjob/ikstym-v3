@@ -1,4 +1,5 @@
 #!/bin/bash
+
 ./run_jasmine.sh
 JASMINE_EXIT_CODE=$?
 ./run_nodeunit.sh

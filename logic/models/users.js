@@ -1,120 +1,144 @@
+var tamejs = require('tamejs').register()
+	, dbLib = require('../db.tjs');
 
-exports.DAO = function(db) {
-	return {
+var db = dbLib.db;
 
-		getAllUsers : function(callback) {
-			this.getFiltered(function() {return true;}, callback);
-		},
+module.exports = {
+	getAllUsers : function(callback) {
+		return this.getFiltered(function() {return true;}, callback);
+	},
 
-		insert: function(user, callback) {
-			var sqlParams = {};
-			for (var i in properties) {
-				var property = properties[i];
-				sqlParams["$" + property.name] = user[property.name];
-			}
-			db.run(INSERT_USER_STMT, 
-				sqlParams,
-				function (err){
-					callback(err);
-				}
-			);
-		},
+	insert: function(user, callback) {
+		var sqlParams = {};
+		for (var propName in exports._properties) {
+			var property = exports._properties[propName];
+			sqlParams["$" + propName] = user[propName];
+		}
+		db.run(exports._INSERT_USER_STMT, 
+			sqlParams, callback);
+	},
 
-		getByUsername : function(username, callback) {
-			db.get(GET_SINGLE_USER_STMT, {$username: username},
-				function(err, row) {
-					if (err) {
-						callback(undefined, err);
-						return;
-					}
-					callback(row);
-				});
-		},
-
-		getFiltered : function(filterFn, callback) {
-			db.all(GET_ALL_USERS_STMT, function(err, result) {
-				if (err) callback(undefined, err);
-				var filteredUsers = [];
-				for (var idx in result) {
-					if (filterFn(result[idx])) {
-						filteredUsers.push(result[idx]);
-					}
-				}
-				callback(filteredUsers, undefined);
-			});
-		},
-
-		deleteAll : function(callback) {
-			db.run(DELETE_ALL_USERS_STMT,callback); 
-		},
-
-		update : function(user, callback) {
-			var err = this.validate(user);
-			if (err) {
-				callback(err);
+	getByUsername : function(username, callback) {
+		var filterFn = function(user) {
+			return user.username == username;
+		};
+		this.getFiltered(filterFn, function(error, lst) {
+			if (error) {
+				callback(error, undefined);
 				return;
 			}
-			var updateArgs = {};
-			for (var idx in user) {
-				updateArgs["$" + idx] = user[idx];
+			if (lst.length != 1) {
+				error = "Error fetching user with username == " + username;
 			}
-			db.run(UPDATE_USER_STMT, updateArgs, callback);
-		},
+			callback(error, lst[0]);
+		});
+	},
 
-		validate : function(user) {
-			for (var i = 0; i < properties.length; ++i) {
-				var prop = properties[i];
-				if (user[prop.name] == undefined) {
-					return prop.name + " is undefined!";
+	getFiltered : function(filterFn, callback) {
+		var error, users = [];
+		db.all("select * from user", function(error, users) {
+			var filteredResults = [];
+			for (idx in users) {
+				if (filterFn(users[idx])){
+					var user = users[idx];
+					for (var field in user) {
+						if (exports._properties[field].type == "boolean") {
+							user[field] = user[field] ? true : false;
+						}
+					}
+					filteredResults.push(users[idx]);
 				}
 			}
-			if (user.email.search(EMAIL_REGEX) == -1) {
-				return "Invalid email address";
+			callback(error,filteredResults);
+		});
+	},
+
+	deleteAll : function(callback) {
+		db.run("delete from user",callback); 
+	},
+
+	update : function(user, callback) {
+		var err = this.validate(user);
+		if (err) {
+			callback(err);
+			return;
+		}
+		var updateArgs = {};
+		for (var idx in user) {
+			updateArgs["$" + idx] = user[idx];
+		}
+		db.run(exports._UPDATE_USER_STMT, updateArgs, callback);
+	},
+
+	delete : function(username, callback) {
+		db.run(exports._DELETE_USER_STMT, {$username : username}, callback);
+	},
+
+	validate : function(user) {
+		for (var propName in exports._properties) {
+			if (user[propName] == undefined) {
+				return propName + " is undefined!";
 			}
 		}
-
-	};
+		if (user.email.search(exports._EMAIL_REGEX) == -1) {
+			return "Invalid email address";
+		}
+	}
 };
 
-var properties = [
-	{name: "username",	type: "string", primaryKey: true},
-	{name: "password",	type: "string"},
-	{name: "email",		type: "string"},
-	{name: "phone",		type: "string"},
-	{name: "nick",		type: "string"},
-	{name: "admin",		type: "boolean"}
-];
+exports._properties = {
+	"username": {type: "string", primaryKey: true},
+	"password":	{type: "string"},
+	"email":	{type: "string"},
+	"phone":	{type: "string"},
+	"nick":		{type: "string"},
+	"admin":	{type: "boolean"},
+	"locked":	{type: "boolean"}
+};
 
 
 var stmt = "create table if not exists user (";
-for (var idx = 0; idx < properties.length; ++idx) {
-	var prop = properties[idx];
+var idx = 0;
+for (var propName in exports._properties) {
+	var prop = exports._properties[propName];
 	if (idx != 0) stmt +=", ";
-	stmt += prop.name + " " + prop.type;
+	stmt += propName + " " + prop.type;
 	if (prop.primaryKey) stmt += " primary key ";
+	idx++;
 };
 stmt += ")";
 
-exports.tableCreationStmt = stmt;
+dbLib.initQueries.push(stmt);
 
 stmt = "update user set ";
-for (var i = 0; i < properties.length; ++i) {
-	var property = properties[i];
-	if (i != 0)
+idx = 0;
+for (var propName in exports._properties) {
+	if (idx++ != 0)
 		stmt += ", ";
-	stmt += "{{name}} = ${{name}}".replace(/\{\{name\}\}/g, property.name);
+	stmt += propName + " = $" + propName;
 }
 
 stmt += " where username = $username";
 
-var UPDATE_USER_STMT = stmt;
+exports._UPDATE_USER_STMT = stmt;
 
-var INSERT_USER_STMT = "INSERT INTO user values ($username, $password, $email, $phone, $nick, $admin)";
+stmt = "INSERT INTO user values (";
 
-var GET_SINGLE_USER_STMT = "SELECT * FROM user where username = $username";
+idx = 0;
+for (var propName in exports._properties) {
+	var property = exports._properties[propName];
+	if (idx++ != 0) stmt += ", ";
+	stmt += "$" + propName;
+}
 
-var GET_ALL_USERS_STMT = "SELECT * FROM user";
+stmt += ")";
 
-var DELETE_ALL_USERS_STMT = "DELETE FROM user WHERE 1=1";
+exports._INSERT_USER_STMT = stmt;
 
-var EMAIL_REGEX = /^\s*[\w\-\+_]+(\.[\w\-\+_]+)*\@[\w\-\+_]+\.[\w\-\+_]+(\.[\w\-\+_]+)*\s*$/;
+exports._GET_SINGLE_USER_STMT = "SELECT * FROM user where username = $username";
+
+exports._GET_ALL_USERS_STMT = "SELECT * FROM user";
+
+exports._DELETE_USER_STMT = "DELETE from user where username = $username";
+
+exports._EMAIL_REGEX = /^\s*[\w\-\+_]+(\.[\w\-\+_]+)*\@[\w\-\+_]+\.[\w\-\+_]+(\.[\w\-\+_]+)*\s*$/;

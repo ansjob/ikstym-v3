@@ -1,9 +1,9 @@
 {
-  "name": "application-name",
+  "name": "ikstym-v3",
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node app"
+    "start": "node main"
   },
   "dependencies": {
     "express": "3.0.0rc3",
@@ -12,6 +12,7 @@
 	"sqlite3" : ">=2.1.5"
   },
 	"scripts": {
-		"test" : "./run_tests"
+		"test" : "./run_tests",
+		"install" : "./compile"
 	}
 }

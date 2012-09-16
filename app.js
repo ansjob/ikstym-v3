@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -7,10 +6,14 @@ var express = require('express')
 	, routes = require('./routes')
 	, http = require('http')
 	, path = require('path')
+	, tamejs = require('tamejs').register()
 	, repl = require('repl')
-	, users = require('./logic/models/users').dbAccessClass;
+	, db = require('./logic/db.tjs')
+	, users = require('./logic/models/users');
 
 var app = express();
+
+db.runInitQueries();
 
 global.app = app;
 global.users = users;
@@ -62,4 +65,5 @@ http.createServer(app).listen(app.get('port'), function(){
 		process.exit();
 	});
 });
+
 

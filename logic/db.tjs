@@ -1,0 +1,17 @@
+var sqlite3 = require('sqlite3').verbose();
+
+await {
+	exports.db = new sqlite3.Database("ikstym.db");
+}
+
+exports.initQueries = [];
+
+exports.runInitQueries = function() {
+	await {
+		for (var idx in exports.initQueries) {
+			var sql = exports.initQueries[idx];
+			exports.db.run(sql);
+		};
+	}
+};
+
