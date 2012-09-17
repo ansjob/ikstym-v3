@@ -6,12 +6,18 @@ await {
 
 exports.initQueries = [];
 
-exports.runInitQueries = function() {
-	await {
-		for (var idx in exports.initQueries) {
-			var sql = exports.initQueries[idx];
-			exports.db.run(sql);
-		};
-	}
+exports.runInitQueries = function(callback) {
+	//Special case:
+	if (exports.initQueries.length == 0) callback();
+
+	var numCompleted = 0;
+	var onCompletion = function() {
+		if (++numCompleted == exports.initQueries.length)
+			callback();
+	};
+	for (var idx in exports.initQueries) {
+		var sql = exports.initQueries[idx];
+		exports.db.run(sql, onCompletion);
+	};
 };
 

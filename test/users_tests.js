@@ -1,13 +1,12 @@
 var nodeunit = require('nodeunit'),
 	tamejs = require('tamejs').register();
 
-var users = require("../logic/models/users");
-
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(':memory:');
-
 var dbLib = require("../logic/db.tjs");
 dbLib.db = db;
+
+var users = require("../logic/models/users");
 
 var testUser = {
 	username: "ansjob",
@@ -32,8 +31,7 @@ var testUser2 = {
 module.exports = {
 	setUp: function(callback) {
 		this.setup = true;
-		dbLib.runInitQueries();
-		callback();
+		dbLib.runInitQueries(callback);
 	},
 
 	tearDown: function(callback) {

@@ -5,7 +5,7 @@ var db = dbLib.db;
 
 module.exports = {
 	getAllUsers : function(callback) {
-		return this.getFiltered(function() {return true;}, callback);
+		this.getFiltered(function() {return true;}, callback);
 	},
 
 	insert: function(user, callback) {
@@ -35,6 +35,7 @@ module.exports = {
 	},
 
 	getFiltered : function(filterFn, callback) {
+		console.log("using db : " + db.filename);
 		var error, users = [];
 		db.all("select * from user", function(error, users) {
 			var filteredResults = [];

@@ -13,6 +13,6 @@
   },
 	"scripts": {
 		"test" : "./run_tests",
-		"install" : "./compile"
+		"install" : "make"
 	}
 }

@@ -12,8 +12,9 @@ var express = require('express')
 	, users = require('./logic/models/users');
 
 var app = express();
-
-db.runInitQueries();
+await {
+db.runInitQueries(defer());
+}
 
 global.app = app;
 global.users = users;
