@@ -1,4 +1,4 @@
-var dbLib = require('../db.js');
+var dbLib = require('logic/db.js');
 
 var db = dbLib.db;
 

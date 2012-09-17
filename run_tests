@@ -2,7 +2,6 @@
 
 NODE_PATH=`pwd`
 
-echo $NODE_PATH
 export NODE_PATH
 
 ./run_jasmine.sh
