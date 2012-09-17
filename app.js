@@ -6,15 +6,13 @@ var express = require('express')
 	, routes = require('./routes')
 	, http = require('http')
 	, path = require('path')
-	, tamejs = require('tamejs').register()
 	, repl = require('repl')
-	, db = require('./logic/db.tjs')
+	, dbLib = require('./logic/db.js')
 	, users = require('./logic/models/users');
 
 var app = express();
-await {
-db.runInitQueries(defer());
-}
+
+dbLib.runInitQueries();
 
 global.app = app;
 global.users = users;

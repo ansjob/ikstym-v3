@@ -1,5 +1,4 @@
-var tamejs = require('tamejs').register()
-	, dbLib = require('../db.tjs');
+var dbLib = require('../db.js');
 
 var db = dbLib.db;
 
@@ -35,7 +34,6 @@ module.exports = {
 	},
 
 	getFiltered : function(filterFn, callback) {
-		console.log("using db : " + db.filename);
 		var error, users = [];
 		db.all("select * from user", function(error, users) {
 			var filteredResults = [];

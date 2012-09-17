@@ -12,7 +12,6 @@
 	"sqlite3" : ">=2.1.5"
   },
 	"scripts": {
-		"test" : "./run_tests",
-		"install" : "make"
+		"test" : "./run_tests"
 	}
 }
