@@ -1,9 +1,40 @@
 <!doctype html>
 <html>
 <head>
+<script src="js/lib/require.js" data-main="js/main"></script>
+<link href="/css/lib/bootstrap/bootstrap.css" rel="stylesheet">
+<link href="/css/lib/bootstrap/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/main.css" rel="stylesheet">
 <title>IK Stym version 3</title>
 </head>
 <body>
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container">
+			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</a>
+			<a class="brand" href="#">IK Stym 3.0</a>
+			<div class="nav-collapse collapse">
+				<ul class="nav" id="navlinks">
+					<li><a href="#">Startsida</a></li>
+					<li><a href="#about">Om laget</a></li>
+					<li><a href="#calendar">Kalender</a></li>
+					<li><a href="#guestbook">Gästbok</a></li>
+					<li><a href="#login" id = "loginlink">Logga in</a></li>
+				</ul>
+			</div><!--/.nav-collapse -->
+		</div>
+	</div>
+</div>
+
+<div class="container" id = "main-content">
+	<h2 style="text-align: center;">Laddar IK Stym 3.0</h2>
+	<img style="margin-left: auto; margin-right: auto; display: block;" src="images/ajax-loader.gif" />
+</div>
 
 </body>
 </html>

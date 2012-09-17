@@ -1,0 +1,23 @@
+body {
+	background-color: #878787;
+	background-image: url('/images/barney.png');
+	background-repeat: no-repeat;
+}
+
+@media (min-width: 981px) {
+	body {
+		padding-top: 60px;
+	}
+}
+
+div#main-content {
+	background-color: #121212;
+	color: #ABABAB;
+	border-radius: 15px;
+	padding: 10px;
+	border: 1px solid white;
+}
+
+h1, h2 {
+	color: #F80;
+}
