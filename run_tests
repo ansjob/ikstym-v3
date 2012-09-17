@@ -1,5 +1,10 @@
 #!/bin/bash
 
+NODE_PATH=`pwd`
+
+echo $NODE_PATH
+export NODE_PATH
+
 ./run_jasmine.sh
 JASMINE_EXIT_CODE=$?
 ./run_nodeunit.sh

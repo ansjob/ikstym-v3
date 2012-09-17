@@ -1,5 +1,4 @@
 
-var tamejs = require("tamejs");
 var users = require("../logic/models/users.js");
 
 exports.mappings = [ 

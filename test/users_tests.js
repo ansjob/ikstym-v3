@@ -2,10 +2,10 @@ var nodeunit = require('nodeunit');
 
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(':memory:');
-var dbLib = require("../logic/db.js");
+var dbLib = require("logic/db.js");
 dbLib.db = db;
 
-var users = require("../logic/models/users");
+var users = require("logic/models/users");
 
 var testUser = {
 	username: "ansjob",
