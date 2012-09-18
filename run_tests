@@ -6,7 +6,7 @@ export NODE_PATH
 
 ./run_jasmine.sh
 JASMINE_EXIT_CODE=$?
-./run_nodeunit.sh
+env NODE_PATH=`pwd` node run_nodeunit.js
 NODEUNIT_EXIT_CODE=$?
 
 if [ $NODEUNIT_EXIT_CODE -ne 0 ]; then
