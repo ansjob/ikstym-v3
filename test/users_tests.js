@@ -5,11 +5,12 @@ var db = new sqlite3.Database(':memory:');
 var dbLib = require("logic/db.js");
 dbLib.db = db;
 
-var users = require("logic/models/users");
+var users = require("logic/models/users"),
+	auth = require("logic/auth");
 
 var testUser = {
 	username: "ansjob",
-	password: "test123",
+	password: auth.hash("test123"),
 	email: "ansjob@test.se",
 	phone: "123456",
 	nick: "Sjöberg",
@@ -19,7 +20,7 @@ var testUser = {
 
 var testUser2 = {
 	username: "testuser",
-	password: "test123",
+	password: auth.hash("test123"),
 	email: "test@test.se",
 	phone: "1234567",
 	nick: "Testarn",
@@ -29,12 +30,10 @@ var testUser2 = {
 
 module.exports = {
 	setUp: function(callback) {
-		this.setup = true;
 		dbLib.runInitQueries(callback);
 	},
 
 	tearDown: function(callback) {
-		this.setup = false;
 		users.deleteAll();
 		callback();
 	},
