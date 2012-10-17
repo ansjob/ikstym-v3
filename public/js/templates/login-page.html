@@ -1,6 +1,36 @@
 <h2>Logga in</h2>
 
-<form action = "#">
-	<input type = "text" name = "username">
-	<input type = "password" name = "password">
+<form action = "#" method = "post">
+	<div class = "container">
+		<div class = "row">
+			<div class="span4">
+				<label for="username">Användarnamn</label>
+				<input type = "text" name = "username">
+			</div>
+		</div>
+		<div class = "row">
+			<div class="span4">
+				<label for="password">Lösenord</label>
+				<input type = "password" name = "password">
+			</div>
+		</div>
+		<div class = "row">
+			<div class="span4">
+				<p class = "error" id = "error"></p>
+			</div>
+		</div>
+		<div class = "row">
+			<div class="span4">
+				<a href = "#recover-password">
+					Glömt ditt lösenord?
+				</a>
+			</div>
+		</div>
+		<div class = "row" style="text-align:">
+			<div class="span2">
+			<input type="submit" value="Logga in" />
+			</div>
+		</div>
+	</div>
 </form>
+

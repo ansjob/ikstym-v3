@@ -7,7 +7,8 @@ define([], function() {
 			"backbone"		: "lib/backbone-min",
 			"underscore"	: "lib/underscore-min",
 			"marionette"	: "lib/backbone.marionette",
-			"text"			: "lib/text"
+			"text"			: "lib/text",
+			"order"			: "lib/order"
 		},
 		shim : {
 			'backbone' : {

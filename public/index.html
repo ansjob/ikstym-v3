@@ -1,7 +1,9 @@
 <!doctype html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="js/lib/require.js" data-main="js/main"></script>
+<link href="js/lib/jquery-1.8.0.min.js">
 <link href="/css/lib/bootstrap/bootstrap.css" rel="stylesheet">
 <link href="/css/lib/bootstrap/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/main.css" rel="stylesheet">
@@ -9,7 +11,7 @@
 </head>
 <body>
 
-<div class="navbar navbar-inverse navbar-fixed-top">
+<div class="navbar navbar-inverse navbar-fixed-top navbar-collapse">
 	<div class="navbar-inner">
 		<div class="container">
 			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -30,11 +32,13 @@
 		</div>
 	</div>
 </div>
+<div class="container" id="modal"></div>
 
 <div class="container" id = "main-content">
 	<h2 style="text-align: center;">Laddar IK Stym 3.0</h2>
 	<img style="margin-left: auto; margin-right: auto; display: block;" src="images/ajax-loader.gif" />
 </div>
+
 
 </body>
 </html>

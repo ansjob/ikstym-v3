@@ -6,6 +6,7 @@ var express = require('express')
 	, routes = require('./routes')
 	, http = require('http')
 	, path = require('path')
+	, auth = require('./logic/auth')
 	, repl = require('repl')
 	, dbLib = require('./logic/db.js')
 	, users = require('./logic/models/users');
@@ -17,6 +18,7 @@ dbLib.runInitQueries();
 global.app = app;
 global.users = users;
 global.routes = routes;
+global.auth = auth;
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);

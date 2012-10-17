@@ -1,10 +1,110 @@
-define(["marionette", "jquery", "text!templates/login-page.html"], 
-	function(Marionette, $, template) {
+define([
+	"marionette", 
+	"jquery", 
+	"text!templates/login-page.html", 
+	"views/error_dialog",
+	"utils"], 
+	function(Marionette, $, template, ErrorDialog, utils) {
+
+
+		var DEBUG_LEVEL = 3;
+
+		var DEBUG = function(level, message) {
+			if (level <= DEBUG_LEVEL) {
+				console.log("[LOGIN VIEW] " + message);
+			}
+		};
 
 		var LoginView = Marionette.View.extend({
-			el: "div",
+			tagName: "div",
+
+			initialize: function(options) {
+				_.bindAll(this);
+				this.vent = options.vent;
+			},
+
 			render: function() {
+				DEBUG(2, "rendering!");
 				this.$el.html(template);
+				var form = this.$el.find("form")[0];
+				var that = this;
+				form.onsubmit = function(ev) {
+					ev.preventDefault();
+					that.onFormSubmit();
+				};
+			},
+
+			onFormSubmit : function() {
+					if (this.formLocked) return;
+					var username = this.$el.find("input[name='username']").val(),
+						password = this.$el.find("input[name='password']").val();
+					var hash = utils.hash(password);
+					this.username = username;
+					this.hash = hash;
+					this.lockForm();
+
+					DEBUG(3, "Username entered: " + username);
+					DEBUG(3, "Hash calculated: " + hash);
+
+					$.ajax({
+						type : "POST",
+						url : "api/login",
+						data : {
+							username: username,
+							hash : hash
+						},
+						success: this.onLoginSuccess,
+						error: this.onLoginFail
+					});
+			},
+
+			onLoginSuccess : function(data) {
+				DEBUG(1, "Login Successful!");
+				this.router.navigate("", true);
+				this.vent.trigger("login-success", {
+					username : this.username,
+					hash : this.hash,
+					isAdmin : data.isAdmin
+				});
+			},
+
+			onLoginFail : function(result) {
+				DEBUG(1, "Login failed!");
+				switch(result.status) {
+					case 404:
+						this.renderPageNotFound();
+					case 401:
+						this.renderAccessDenied();
+					break;
+				}
+				this.unlockForm();
+			},
+
+			clearErrorMessage : function() {
+				this.$el.find("#error").html('');
+				this.router.navigate("/", true);
+			},
+
+			renderPageNotFound : function() {
+				var errorMessage = "404! Du försökte ladda en sida som inte fanns. Detta kan bero på ett programmeringsfel!";
+				var errorDialog = new ErrorDialog({message: errorMessage});
+				errorDialog.show();
+			},
+
+			renderAccessDenied : function() {
+				var errorMessage = "Fel användarnamn eller lösenord." + 
+					" Försök igen eller begär ett nytt lösenord skickat till din mail";
+				this.$el.find("#error").html(errorMessage);
+			},
+
+			lockForm : function() {
+				this.$el.find("button").attr("disabled", "disabled");
+				this.formLocked = true;
+			},
+
+			unlockForm : function() {
+				this.$el.find("button").attr("disabled", "");
+				this.formLocked = false;
 			}
 		});
 

@@ -1,10 +1,43 @@
-define(["marionette", "backbone", "router"], 
-	function(Marionette, Backbone, Router) {
-	var App = new Marionette.Application();
+define(["marionette", "backbone", "router", "underscore"], 
+	function(Marionette, Backbone, Router, _) {
+
+	var IKApp = Marionette.Application.extend({
+		initializer : function(options) {
+			_.bindAll(this);
+		},
+
+		saveUserDetails : function(userdata) {
+			alert("TODO");
+		}
+	});
+
+	var App = new IKApp();
+
+	var mainRegion = new Backbone.Marionette.Region({
+		el : "#main-content"
+	});
+	var modalRegion = new Backbone.Marionette.Region({
+		el : "#modal"
+	});
+	var statusRegion = new Backbone.Marionette.Region({
+		el : "#status"
+	});
+
+	App.vent.on("login-success", function(userdata) {
+		App.saveUserDetails(userdata);
+		var statusView = new StatusView(userdata);
+		modalRegion.show(statusView);
+	});
 
 	App.addInitializer(function(options) {
-		new Router();
-		Backbone.history.start();
+
+		var router = new Router({
+			'mainRegion' : mainRegion, 
+			'modalRegion' : modalRegion,
+			'statusRegion' : statusRegion,
+			'vent' : this.vent
+		});
+		router.start();
 	});
 	return App;
 });
