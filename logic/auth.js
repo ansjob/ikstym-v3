@@ -16,8 +16,8 @@ module.exports = {
 		}
 		else {
 			var filterFn = function(user) {
-				return user.username == options.username 
-					&& user.password == options.password;
+				return user.username.toLowerCase() == options.username.toLowerCase() 
+					&& user.password.toLowerCase() == options.password.toLowerCase();
 			};
 			users.getFiltered(filterFn, function(error, results) {
 				if (error || results.length != 1 || results[0].locked) {

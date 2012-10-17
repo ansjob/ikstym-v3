@@ -82,6 +82,16 @@ module.exports = {
 			});
 	},
 
+	testIgnoringCase : function(test) {
+		test.expect(2);
+		auth.authenticate({username: "aNsJoB", password: auth.hash("test123")},
+			function(error, result) {
+				test.equal(null, error);
+				test.equal(true, result.authenticated);
+				test.done();
+		});
+	},
+
 	testGettingWithWrongPassword : function(test) {
 		test.expect(2);
 		auth.authenticate({username : "ansjob", password: auth.hash("__WRONG__")},
