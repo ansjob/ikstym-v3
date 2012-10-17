@@ -1,13 +1,12 @@
 define([
 	"marionette", 
-	"jquery", 
 	"text!templates/login-page.html", 
 	"views/error_dialog",
 	"utils"], 
-	function(Marionette, $, template, ErrorDialog, utils) {
+	function(Marionette, template, ErrorDialog, utils) {
 
 
-		var DEBUG_LEVEL = 3;
+		var DEBUG_LEVEL = 0;
 
 		var DEBUG = function(level, message) {
 			if (level <= DEBUG_LEVEL) {
@@ -60,12 +59,13 @@ define([
 
 			onLoginSuccess : function(data) {
 				DEBUG(1, "Login Successful!");
-				this.router.navigate("", true);
-				this.vent.trigger("login-success", {
+				this.clearErrorMessage();
+				this.vent.trigger("login:success", {
 					username : this.username,
 					hash : this.hash,
 					isAdmin : data.isAdmin
 				});
+				this.unlockForm();
 			},
 
 			onLoginFail : function(result) {
@@ -73,20 +73,23 @@ define([
 				switch(result.status) {
 					case 404:
 						this.renderPageNotFound();
+						break;
 					case 401:
 						this.renderAccessDenied();
-					break;
+						break;
+					default:
+						this.renderGenericError();
 				}
 				this.unlockForm();
 			},
 
 			clearErrorMessage : function() {
 				this.$el.find("#error").html('');
-				this.router.navigate("/", true);
 			},
 
 			renderPageNotFound : function() {
-				var errorMessage = "404! Du försökte ladda en sida som inte fanns. Detta kan bero på ett programmeringsfel!";
+				var errorMessage = "404! Du försökte ladda en sida som inte fanns." +
+					" Detta kan bero på ett programmeringsfel!";
 				var errorDialog = new ErrorDialog({message: errorMessage});
 				errorDialog.show();
 			},
@@ -94,7 +97,17 @@ define([
 			renderAccessDenied : function() {
 				var errorMessage = "Fel användarnamn eller lösenord." + 
 					" Försök igen eller begär ett nytt lösenord skickat till din mail";
-				this.$el.find("#error").html(errorMessage);
+				this.setErrorMessage(errorMessage);
+			},
+
+			renderGenericError: function() {
+				var errorMessage = "Något gick fel vid inloggningen. " + 
+					"Försök igen senare, eller kontakta admin om problemet kvarstår.";
+				this.setErrorMessage(errorMessage);
+			},
+
+			setErrorMessage : function (msg) {
+				this.$el.find("#error").html(msg);
 			},
 
 			lockForm : function() {

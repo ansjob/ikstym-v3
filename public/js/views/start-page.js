@@ -1,10 +1,9 @@
 define(
 	[
 		"marionette",
-		"jquery",
 		"text!templates/start.html"
 	],
-	function(Marionette, $, template) {
+	function(Marionette, template) {
 		var StartView = Marionette.View.extend({
 
 			tagName: "div",

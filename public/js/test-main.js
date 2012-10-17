@@ -5,15 +5,18 @@ define([
 	require([
 		"specs/login-page",
 		"specs/router",
-		"specs/hash_util"
+		"specs/hash_util",
+		"specs/local-storage"
 	], function(
 		LoginTest,
 		RouterTest,
-		HashUtilTest
+		HashUtilTest,
+		LocalStorageTest
 	) {
 		LoginTest();
 		RouterTest();
 		HashUtilTest();
+		LocalStorageTest();
 
 		var jasmineEnv = jasmine.getEnv();
       jasmineEnv.updateInterval = 1000;

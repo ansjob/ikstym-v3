@@ -23,7 +23,7 @@ define(["marionette", "backbone", "router", "underscore"],
 		el : "#status"
 	});
 
-	App.vent.on("login-success", function(userdata) {
+	App.vent.on("login:success", function(userdata) {
 		App.saveUserDetails(userdata);
 		var statusView = new StatusView(userdata);
 		modalRegion.show(statusView);

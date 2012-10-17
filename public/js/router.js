@@ -1,28 +1,39 @@
 define(
-	["backbone",
-		"jquery",
+	[
+		"backbone",
+		"underscore",
 		"views/login-page",
 		"views/start-page",
 		"views/error_dialog"
 	]
 	,function(
-		Backbone, $,
+		Backbone, _,
 		LoginView,
 		StartView,
 		ErrorDialog) {
 
-	var DEBUGING_ROUTER = true;
+	var DEBUGING_ROUTER = false;
 	var DEBUG = function(msg) {
 		if (DEBUGING_ROUTER) console.log("[ROUTER] " + msg);
 	};
 	var IKRouter = Backbone.Router.extend({
 
 		initialize: function(options) {
+			_.bindAll(this);
 			this.mainRegion = options.mainRegion;
 			this.modalRegion = options.modalRegion;
 			this.statusRegion = options.statusRegion;
 			this.vent = options.vent;
+			this.registerEvents();
 		},
+
+		registerEvents : function() {
+			var that = this;
+			this.vent.on("login:success", function() {
+				that.navigate("", true);
+			});
+		},
+
 
 		routes : {
 			login		: "gotoLogin",
@@ -66,10 +77,12 @@ define(
 					" för att åstadkomma detta tokeri.",
 				region : this.modalRegion
 			});
+			this.clearErrors();
 			errorDialog.show();
 		},
 
 		clearErrors : function() {
+			DEBUG("Removing error messages!");
 			this.modalRegion.reset();
 		}
 

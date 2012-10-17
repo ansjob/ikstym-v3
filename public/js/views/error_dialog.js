@@ -1,5 +1,5 @@
-define(["marionette", "jquery", "text!templates/message.html", "underscore"],
-	function(Marionette, $, template, _) {
+define(["marionette", "text!templates/message.html", "underscore"],
+	function(Marionette, template, _) {
 
 		template = _.template(template);
 		var ErrorDialog = Marionette.View.extend({
