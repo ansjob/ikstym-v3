@@ -7,7 +7,7 @@ define(["marionette", "backbone", "router", "underscore"],
 		},
 
 		saveUserDetails : function(userdata) {
-			alert("TODO");
+			localStorage.set("userdata", JSON.stringify(userdata));
 		}
 	});
 
