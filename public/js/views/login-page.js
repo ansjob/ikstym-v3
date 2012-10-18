@@ -60,11 +60,8 @@ define([
 			onLoginSuccess : function(data) {
 				DEBUG(1, "Login Successful!");
 				this.clearErrorMessage();
-				this.vent.trigger("login:success", {
-					username : this.username,
-					hash : this.hash,
-					isAdmin : data.isAdmin
-				});
+				data.hash = this.hash;
+				this.vent.trigger("login:success", data);
 				this.unlockForm();
 			},
 

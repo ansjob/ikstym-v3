@@ -86,13 +86,15 @@ module.exports = {
 };
 
 exports._properties = {
-	"username": {type: "string", primaryKey: true},
-	"password":	{type: "string"},
-	"email":	{type: "string"},
-	"phone":	{type: "string"},
-	"nick":		{type: "string"},
-	"admin":	{type: "boolean"},
-	"locked":	{type: "boolean"}
+	"username":		{type: "string", primaryKey: true},
+	"password":		{type: "string"},
+	"first_name":	{type: "string"},
+	"last_name":	{type: "string"},
+	"email":		{type: "string"},
+	"phone":		{type: "string"},
+	"nick":			{type: "string"},
+	"admin":		{type: "boolean"},
+	"locked":		{type: "boolean"}
 };
 
 

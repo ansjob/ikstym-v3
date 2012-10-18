@@ -46,8 +46,9 @@ exports.mappings = [
 					res.status(500).send("Server failed");
 				}
 				else if (results.authenticated) {
-					res.send({
-						isAdmin : results.admin
+					users.getByUsername(username, function(error, user) {
+						delete user.password;
+						res.send(user);
 					});
 				}
 				else if (results.locked) {

@@ -1,5 +1,12 @@
-define(["marionette", "backbone", "router", "underscore"], 
-	function(Marionette, Backbone, Router, _) {
+define([
+	"marionette", 
+	"backbone", 
+	"router", 
+	"underscore", 
+	"views/login-status-view"
+	], 
+	function(Marionette, Backbone, Router, _,
+		LoginStatusView) {
 
 	var IKApp = Marionette.Application.extend({
 		initializer : function(options) {
@@ -7,7 +14,7 @@ define(["marionette", "backbone", "router", "underscore"],
 		},
 
 		saveUserDetails : function(userdata) {
-			localStorage.set("userdata", JSON.stringify(userdata));
+			localStorage.setItem("userdata", JSON.stringify(userdata));
 		}
 	});
 
@@ -25,8 +32,10 @@ define(["marionette", "backbone", "router", "underscore"],
 
 	App.vent.on("login:success", function(userdata) {
 		App.saveUserDetails(userdata);
-		var statusView = new StatusView(userdata);
-		modalRegion.show(statusView);
+		console.log(userdata);
+		var statusView = new LoginStatusView(userdata);
+		statusView.render();
+		statusRegion.show(statusView);
 	});
 
 	App.addInitializer(function(options) {

@@ -11,6 +11,8 @@ var users = require("logic/models/users"),
 var testUser = {
 	username: "ansjob",
 	password: auth.hash("test123"),
+	first_name : "Andreas",
+	last_name : "Sjöberg",
 	email: "ansjob@test.se",
 	phone: "123456",
 	nick: "Sjöberg",
@@ -21,6 +23,8 @@ var testUser = {
 var testUser2 = {
 	username: "testuser",
 	password: auth.hash("test123"),
+	first_name : "Test",
+	last_name : "Testsson",
 	email: "test@test.se",
 	phone: "1234567",
 	nick: "Testarn",
