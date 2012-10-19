@@ -34,7 +34,6 @@ module.exports = {
 	},
 
 	getFiltered : function(filterFn, callback) {
-		var error, users = [];
 		db.all("select * from user", function(error, users) {
 			var filteredResults = [];
 			for (idx in users) {

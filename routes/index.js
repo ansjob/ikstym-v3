@@ -1,6 +1,7 @@
 
 var users = require("../logic/models/users.js");
 var auth = require("../logic/auth");
+var guestbook = require("../logic/models/guestbook");
 exports.mappings = [ 
 	{
 		method: "get",
@@ -57,6 +58,27 @@ exports.mappings = [
 				else {
 					res.status(401).send("Access denied!");
 				}
+			});
+		}
+	},
+
+//Guestbook API
+	{
+		method: "get",
+		route: "/api/guestbook",
+		callback : function(req, res) {
+			guestbook.getAll(function(error, allEntries) {
+				if (error) {
+					res.status(500).send(error);
+					return;
+				}
+				for (var id in allEntries) {
+					var entry = allEntries[id];
+					if (entry.userdata){
+						delete entry.userdata.password;
+					}
+				}
+				res.send(allEntries);
 			});
 		}
 	}
