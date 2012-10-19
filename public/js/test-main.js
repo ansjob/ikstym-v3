@@ -8,14 +8,16 @@ define([
 		"specs/hash_util",
 		"specs/local-storage",
 		"specs/authenticated-requests",
-		"specs/login-status-view"
+		"specs/login-status-view",
+		"specs/guestbook"
 	], function(
 		LoginTest,
 		RouterTest,
 		HashUtilTest,
 		LocalStorageTest,
 		AuthenticatedRequestsTest,
-		LoginStatusViewTest
+		LoginStatusViewTest,
+		GuestbookTests
 	) {
 		LoginTest();
 		RouterTest();
@@ -23,6 +25,7 @@ define([
 		LocalStorageTest();
 		AuthenticatedRequestsTest();
 		LoginStatusViewTest();
+		GuestbookTests();
 
 		var jasmineEnv = jasmine.getEnv();
 		jasmineEnv.updateInterval = 1000;

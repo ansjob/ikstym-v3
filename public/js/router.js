@@ -4,13 +4,15 @@ define(
 		"underscore",
 		"views/login-page",
 		"views/start-page",
-		"views/error_dialog"
+		"views/error_dialog",
+		"views/guestbook-page"
 	]
 	,function(
 		Backbone, _,
 		LoginView,
 		StartView,
-		ErrorDialog) {
+		ErrorDialog,
+		Guestbook) {
 
 	var DEBUGING_ROUTER = false;
 	var DEBUG = function(msg) {
@@ -37,6 +39,7 @@ define(
 		routes : {
 			login		: "gotoLogin",
 			logout		: "logoutGotoStart",
+			guestbook	: "gotoGuestbook",
 			''			: "gotoStart",
 			'*actions'	: "defaultAction"
 		},
@@ -71,6 +74,12 @@ define(
 			localStorage.removeItem("userdata");
 			this.vent.trigger("logout");
 			this.gotoStart();
+		},
+
+		gotoGuestbook : function() {
+			var view = new Guestbook();
+			this.clearErrors();
+			this.mainRegion.show(view);
 		},
 
 		defaultAction : function() {

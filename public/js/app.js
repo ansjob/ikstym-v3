@@ -30,6 +30,10 @@ define([
 		el : "#status"
 	});
 
+	var guestbook_entries = new Backbone.Collection({
+		url : "/api/guestbook"
+	});
+
 	var renderUserInfoView = function(options) {
 		var userdata = localStorage.getItem("userdata");
 		if (userdata) userdata = $.parseJSON(userdata);
@@ -37,6 +41,8 @@ define([
 		view.render();
 		statusRegion.show(view);
 	};
+
+	App.addInitializer(renderUserInfoView);
 
 	App.vent.on("login:success", function(userdata) {
 		App.saveUserDetails(userdata);
@@ -59,10 +65,6 @@ define([
 		});
 		router.start();
 	});
-
-
-	App.addInitializer(renderUserInfoView);
-
 
 	return App;
 });

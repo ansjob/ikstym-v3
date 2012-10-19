@@ -1,13 +1,15 @@
 define(["router", "backbone", "marionette",
 		"views/login-page",
 		"views/start-page",
-		"views/error_dialog"
+		"views/error_dialog",
+		"views/guestbook-page"
 		], 
 
 	function(Router, Backbone, Marionette,
 		LoginView,
 		StartView,
-		ErrorDialog) {
+		ErrorDialog,
+		Guestbook) {
 
 	return function() {
 
@@ -77,6 +79,12 @@ define(["router", "backbone", "marionette",
 			var args = router.navigate.mostRecentCall.args;
 			expect(args[0]).toEqual("");
 			expect(args[1]).toEqual(true);
+		});
+
+		it("renders the guestbook", function() {
+			spyOn(Guestbook.prototype, "render");
+			router.navigate("guestbook", true);
+			expect(Guestbook.prototype.render).toHaveBeenCalled();
 		});
 
 	});
