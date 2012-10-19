@@ -18,6 +18,10 @@ div#main-content {
 	border: 1px solid white;
 }
 
+div#status .row {
+	margin-left: 0px;
+}
+
 
 h1, h2 {
 	color: #F80;

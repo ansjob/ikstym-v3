@@ -22,6 +22,7 @@ define(
 				this.$el.html(template(this.userdata));
 			else
 				this.$el.html(no_auth_template);
+			this.$el.addClass("row alert");
 		}
 
 	});
