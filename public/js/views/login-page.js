@@ -24,6 +24,8 @@ define([
 
 			render: function() {
 				DEBUG(2, "rendering!");
+				localStorage.removeItem("userdata");
+				this.vent.trigger("logout");
 				this.$el.html(template);
 				var form = this.$el.find("form")[0];
 				var that = this;

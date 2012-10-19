@@ -30,12 +30,23 @@ define([
 		el : "#status"
 	});
 
+	var renderUserInfoView = function(options) {
+		var userdata = localStorage.getItem("userdata");
+		if (userdata) userdata = $.parseJSON(userdata);
+		var view = new LoginStatusView(userdata);
+		view.render();
+		statusRegion.show(view);
+	};
+
 	App.vent.on("login:success", function(userdata) {
 		App.saveUserDetails(userdata);
-		console.log(userdata);
-		var statusView = new LoginStatusView(userdata);
-		statusView.render();
-		statusRegion.show(statusView);
+		renderUserInfoView();
+		$("#loginlink").html("Logga ut").attr("href", "#logout");
+	});
+
+	App.vent.on("logout", function() {
+		renderUserInfoView();
+		$("#loginlink").html("Logga in").attr("href", "#login");
 	});
 
 	App.addInitializer(function(options) {
@@ -48,5 +59,10 @@ define([
 		});
 		router.start();
 	});
+
+
+	App.addInitializer(renderUserInfoView);
+
+
 	return App;
 });

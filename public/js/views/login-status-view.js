@@ -2,9 +2,10 @@ define(
 	[
 		"marionette",
 		"underscore",
-		"text!templates/login-status-view.html"
+		"text!templates/login-status-view.html",
+		"text!templates/login-status-view-not-logged-in.html"
 	], 
-	function(Marionette, _, template) {
+	function(Marionette, _, template, no_auth_template) {
 
 	template = _.template(template);
 
@@ -17,7 +18,10 @@ define(
 		},
 
 		render: function() {
-			this.$el.html(template(this.userdata));
+			if (this.userdata)
+				this.$el.html(template(this.userdata));
+			else
+				this.$el.html(no_auth_template);
 		}
 
 	});

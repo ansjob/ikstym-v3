@@ -34,9 +34,9 @@ define(
 			});
 		},
 
-
 		routes : {
 			login		: "gotoLogin",
+			logout		: "logoutGotoStart",
 			''			: "gotoStart",
 			'*actions'	: "defaultAction"
 		},
@@ -54,7 +54,6 @@ define(
 		gotoLogin : function() {
 			DEBUG("Requested to render login page module");
 			var view = new LoginView({
-				router: this,
 				vent : this.vent
 			});
 			this.clearErrors();
@@ -66,6 +65,12 @@ define(
 			var view = new StartView();
 			this.clearErrors();
 			this.mainRegion.show(view);
+		},
+
+		logoutGotoStart: function() {
+			localStorage.removeItem("userdata");
+			this.vent.trigger("logout");
+			this.gotoStart();
 		},
 
 		defaultAction : function() {

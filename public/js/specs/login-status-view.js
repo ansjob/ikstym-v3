@@ -3,7 +3,7 @@ define(["views/login-status-view"], function(AccountStatusView) {
 
 		describe("Login status view", function() {
 
-			describe("login-credentials exist", function() {
+			describe("userdata given", function() {
 
 				var testUser = {
 						username : "testuser123",
@@ -24,7 +24,16 @@ define(["views/login-status-view"], function(AccountStatusView) {
 					expect($(view.el).find("#name").html()).toContain(testUser.first_name);
 				});
 
-				
+			});
+
+			describe("no userdata given", function() {
+
+				var view;
+				it("renders a message saying not logged in", function() {
+					view = new AccountStatusView(undefined);
+					view.render();
+					expect($(view.el).html()).toContain("Ej inloggad");
+				});
 			});
 
 		});
