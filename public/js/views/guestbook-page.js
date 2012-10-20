@@ -56,6 +56,16 @@ define([
 					data: {page: 1}
 				});
 				Marionette.CompositeView.prototype.render.apply(this);
+				var that = this;
+				var form = this.$el.find("form")[0];
+				form.onsubmit = function(submitEvent) {
+					submitEvent.preventDefault();
+					that.onSubmit();
+				};
+			},
+
+			onSubmit : function() {
+				//Här kommer mer kod sen
 			}
 
 		});

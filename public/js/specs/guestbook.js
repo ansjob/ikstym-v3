@@ -94,7 +94,15 @@ define(["views/guestbook-page", "marionette", "backbone"],
 				it("exists", function() {
 					expect($(gb.$el).find("form").length).toEqual(1);
 				});
+
+				it("hooks into form submit events", function() {
+					spyOn(gb, "onSubmit");
+					$(gb.$el.find("form")).submit();
+					expect(gb.onSubmit).toHaveBeenCalled();
+				});
+
 			});
+
 
 		});
 	};
