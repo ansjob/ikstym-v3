@@ -42,6 +42,19 @@ define(["views/guestbook-page", "marionette", "backbone"],
     }
   }
 ];
+
+	var sampleUserData = {
+		"username": "ansjob",
+		"first_name": "Andreas",
+		"last_name": "Sjöberg",
+		"hash" : "somehash876576",
+		"email": "ansjob@kth.se",
+		"phone": 123456,
+		"nick": "Sjöberg",
+		"admin": true,
+		"locked": false
+	};
+
 	return function() {
 		describe("Guestbook", function() {
 
@@ -100,6 +113,63 @@ define(["views/guestbook-page", "marionette", "backbone"],
 					$(gb.$el.find("form")).submit();
 					expect(gb.onSubmit).toHaveBeenCalled();
 				});
+
+				describe("no user data", function() {
+
+					var aliasInput;
+
+					beforeEach(function() {
+						localStorage.removeItem("userdata");
+						gb.render();
+						aliasInput = gb.$el.find("form").find("input[name='alias']");
+					});
+
+					it("has an alias input", function() {
+						expect(aliasInput.length).toEqual(1);
+					});
+
+					it("posts the alias to ajax", function() {
+						var alias = "some-alias";
+						aliasInput.val(alias);
+						spyOn($, "ajax");
+						gb.$el.find("form").submit();
+						var args = $.ajax.mostRecentCall.args[0];
+						expect(args.data.alias).toEqual(alias);
+					});
+
+				});
+
+				describe("userdata exists", function() {
+
+					beforeEach(function() {
+						localStorage.setItem("userdata", JSON.stringify(sampleUserData));
+						gb.render();
+					});
+
+					it("has no alias input", function() {
+						expect(
+							gb.$el.find("form").find("input[name='alias']").length
+						).toEqual(0);
+					});
+
+					it("has a link to the user's profile instead", function() {
+						expect(gb.$el.find("form").find("#alias-container").
+							find("a").attr("href"))
+						.toEqual("#user/" + sampleUserData.username);
+					});
+
+					it("posts the username and hash", function() {
+						spyOn($, "ajax");
+						var entry = "some message posted in the guestbook";
+						gb.$el.find("#gb.input").html(entry);
+						gb.$el.find("form").submit();
+						var args = $.ajax.mostRecentCall.args[0];
+						expect(args.data.username).toEqual(sampleUserData.username);
+						expect(args.data.hash).toEqual(sampleUserData.hash);
+					});
+
+				});
+
 
 			});
 
