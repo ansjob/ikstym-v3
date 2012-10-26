@@ -84,8 +84,18 @@ define([
 			},
 
 			onSubmit : function() {
+
+				this.$el.find("#message").html("");
 				var data = {};
 				data.message = this.$el.find("form").find("#gb-input").val();
+
+				if (!data.message) {
+					this.$el.find("#message").html(
+					"Ett längre meddelande än så kan du nog skriva..."
+					);
+					return;
+				}
+				this.lockForm();
 				if (localStorage.getItem("userdata")) {
 					var req = new GuestbookAuthorizedPost({
 						message: data.message,
@@ -98,22 +108,39 @@ define([
 				else {
 					data.alias = this.$el.find("form")
 						.find("input[name='alias']").val();
+					if (!data.alias) {
+						this.$el.find("#message").html(
+							"Glöm inte att skriva in ditt namn!"
+						);
+						return;
+					}
+					var that = this;
 					$.ajax({
 						url: "/api/guestbook",
 						type: "post",
 						data: data,
-						success : this.postSuccess,
-						error: this.postError
+						success : function() {that.postSuccess(arguments);},
+						error: function() {that.postError(arguments);}
 					});
 				}
 			},
 
 			postSuccess : function() {
-				console.log("post success!");
+				this.unlockForm();
 			},
 
 			postError: function() {
-				console.log("post error!");
+				this.unlockForm();
+			},
+
+			lockForm : function() {
+				this.$el.find("form").find("input").attr("disabled", "disabled");
+				this.$el.find("form").find("textarea").attr("disabled", "disabled");
+			},
+
+			unlockForm : function() {
+				this.$el.find("form").find("input").removeAttr("disabled");
+				this.$el.find("form").find("textarea").removeAttr("disabled");
 			}
 
 		});

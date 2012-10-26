@@ -81,6 +81,53 @@ exports.mappings = [
 				res.send(allEntries);
 			});
 		}
+	},
+
+//Insert guestbook entry
+	{
+		method: "post",
+		route: "/api/guestbook",
+		callback: function(req, res) {
+
+			var entry = {
+				time_stamp : new Date().getTime(),
+				text : req.body.message,
+				ip : req.ip,
+			};
+
+			var insert = function() {
+				guestbook.insert(entry, function(error) {
+					if (error) {
+						res.status(500).send(
+							"Ett fel uppstod när inlägget skulle sparas!"
+						);
+					} else {
+						res.send("OK");
+					}
+				});
+			};
+			if (req.body.username) {
+				auth.authenticate({
+					username: req.body.username,
+					password: req.body.hash
+				}, function(error, results) {
+					if (error) {
+						res.status(500).send("Server failure");
+					}
+					else if (results.authenticated) {
+						entry.username = req.body.username;
+						insert();
+					}
+					else {
+						res.status(401).send("Access denied!");
+					}
+				});
+			} else if (req.body.alias) {
+				//TODO Sanitize the shit out of this!
+				entry.alias = req.body.alias;
+				insert();
+			}
+		}
 	}
 
 ];

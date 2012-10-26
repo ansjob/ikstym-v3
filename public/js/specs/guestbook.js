@@ -102,6 +102,8 @@ define(["views/guestbook-page", "marionette", "backbone"],
 			describe("the submission form", function() {
 				beforeEach(function() {
 					gb.render();
+					gb.$el.find("input[name='alias']").val("testalias");
+					gb.$el.find("textarea[name='gb-input']").html("testmessage");
 				});
 
 				it("exists", function() {
@@ -114,6 +116,54 @@ define(["views/guestbook-page", "marionette", "backbone"],
 					expect(gb.onSubmit).toHaveBeenCalled();
 				});
 
+				it("does not submit if there's no text", function() {
+					spyOn($, "ajax");
+					gb.$el.find("input[name='alias']").val("");
+					gb.$el.find("textarea[name='gb-input']").html("");
+					$(gb.$el.find("form")).submit();
+					expect($.ajax).not.toHaveBeenCalled();
+				});
+
+				it("clears old error messages first", function() {
+					var oldError = "some old error message";
+					gb.$el.find("#message").html(oldError);
+					spyOn($, "ajax"); //To avoid real submissions
+					gb.$el.find("form").submit();
+					expect(gb.$el.find("#message")).not.toHaveHtml(oldError);
+				});
+
+				it("locks the input form upon submit", function() {
+					spyOn($, "ajax"); //To avoid real submissions
+					gb.$el.find("form").submit();
+					expect(gb.$el.find("form").find("input[type='submit']"))
+						.toHaveAttr("disabled", "disabled");
+					expect(gb.$el.find("form").find("textarea"))
+						.toHaveAttr("disabled", "disabled");
+				});
+
+				it("unlocks the input form upon success callback", function() {
+					spyOn($, "ajax");
+					gb.$el.find("form").submit();
+					var args = $.ajax.mostRecentCall.args[0];
+					args.success();
+					expect(gb.$el.find("form").find("input[type='submit']"))
+						.not.toHaveAttr("disabled", "disabled");
+					expect(gb.$el.find("form").find("textarea"))
+						.not.toHaveAttr("disabled", "disabled");
+
+				});
+
+				it("unlocks the input form upon error callback", function() {
+					spyOn($, "ajax");
+					gb.$el.find("form").submit();
+					var args = $.ajax.mostRecentCall.args[0];
+					args.error();
+					expect(gb.$el.find("form").find("input[type='submit']"))
+						.not.toHaveAttr("disabled", "disabled");
+					expect(gb.$el.find("form").find("textarea"))
+						.not.toHaveAttr("disabled", "disabled");
+				});
+
 				describe("no user data", function() {
 
 					var aliasInput;
@@ -121,12 +171,34 @@ define(["views/guestbook-page", "marionette", "backbone"],
 					beforeEach(function() {
 						localStorage.removeItem("userdata");
 						gb.render();
+						gb.$el.find("input[name='alias']").val("testalias");
+						gb.$el.find("textarea[name='gb-input']").html("testmessage");
 						aliasInput = gb.$el.find("form").find("input[name='alias']");
 					});
 
 					it("has an alias input", function() {
 						expect(aliasInput.length).toEqual(1);
 					});
+
+					describe("not entering an alias", function() {
+
+						beforeEach(function() {
+						aliasInput.val("");
+						});
+
+						it("does not submit if there's no alias entered", function() {
+							spyOn($, "ajax");
+							gb.$el.find("form").submit();
+							expect($.ajax).not.toHaveBeenCalled();
+						});
+
+						it("shows an error message upon submit", function() {
+							gb.$el.find("form").submit();
+							expect(gb.$el.find("#message")).not.toBeEmpty();
+						});
+
+					});
+
 
 					it("posts the alias to ajax", function() {
 						var alias = "some-alias";
@@ -144,6 +216,8 @@ define(["views/guestbook-page", "marionette", "backbone"],
 					beforeEach(function() {
 						localStorage.setItem("userdata", JSON.stringify(sampleUserData));
 						gb.render();
+						gb.$el.find("input[name='alias']").val("testalias");
+						gb.$el.find("textarea[name='gb-input']").html("testmessage");
 					});
 
 					it("has no alias input", function() {
