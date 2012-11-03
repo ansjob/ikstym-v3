@@ -98,7 +98,7 @@ define([
 				this.lockForm();
 				if (localStorage.getItem("userdata")) {
 					var req = new GuestbookAuthorizedPost({
-						message: data.message,
+						data: data,
 						success: this.postSuccess,
 						error: this.postError
 					});

@@ -164,6 +164,15 @@ define(["views/guestbook-page", "marionette", "backbone"],
 						.not.toHaveAttr("disabled", "disabled");
 				});
 
+				it("posts the message", function() {
+					var testMessage = "testmessage 4711";
+					gb.$el.find("#gb-input").html(testMessage);
+					spyOn($, "ajax");
+					gb.$el.find("form").submit();
+					var args = $.ajax.mostRecentCall.args[0];
+					expect(args.data.message).toEqual(testMessage);
+				});
+
 				describe("no user data", function() {
 
 					var aliasInput;

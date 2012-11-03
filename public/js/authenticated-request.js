@@ -13,13 +13,13 @@ define(["backbone"], function(Backbone) {
 		},
 
 		execute : function() {
+			var data = this.get("data") || {};
+			data.username = this.userdata.username;
+			data.hash = this.userdata.hash;
 			$.ajax({
 				url : this.get("url"),
 				type: this.get("type"),
-				data: {
-					username : this.userdata.username,
-					hash : this.userdata.hash,
-				},
+				data: data,
 				success : this.get("success"),
 				error: this.get("error")
 			});
