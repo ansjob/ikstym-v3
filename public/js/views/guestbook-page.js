@@ -55,7 +55,7 @@ define([
 			bindEvents : function() {
 				var that = this;
 				this.collection.on("reset", function() {
-					that.$el.find("#message").html("");
+					that.clearErrorMessage();
 				});
 			},
 
@@ -85,12 +85,12 @@ define([
 
 			onSubmit : function() {
 
-				this.$el.find("#message").html("");
+				this.clearErrorMessage();
 				var data = {};
 				data.message = this.$el.find("form").find("#gb-input").val();
 
 				if (!data.message) {
-					this.$el.find("#message").html(
+					this.showErrorMessage(
 					"Ett längre meddelande än så kan du nog skriva..."
 					);
 					return;
@@ -107,11 +107,9 @@ define([
 
 				else {
 					data.alias = this.$el.find("form")
-						.find("input[name='alias']").val();
+						.find("input[name='alias']").val().trim();
 					if (!data.alias) {
-						this.$el.find("#message").html(
-							"Glöm inte att skriva in ditt namn!"
-						);
+						this.showErrorMessage("Glöm inte att skriva in ditt namn!");
 						this.unlockForm();
 						return;
 					}
@@ -132,6 +130,14 @@ define([
 
 			postError: function() {
 				this.unlockForm();
+			},
+
+			clearErrorMessage : function() {
+				this.$el.find("#message").html("").hide();
+			},
+
+			showErrorMessage : function(msg) {
+				this.$el.find("#message").html(msg).show();
 			},
 
 			lockForm : function() {

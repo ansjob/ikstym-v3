@@ -97,6 +97,7 @@ define(["views/guestbook-page", "marionette", "backbone"],
 				var args = $.ajax.mostRecentCall.args[0]; 
 				args.success(sampleEntries);
 				expect(gb.$el.find("#message").html()).toEqual("");
+				expect(gb.$el.find("#message").is(":hidden")).toBeTruthy();
 			});
 
 			describe("the submission form", function() {
@@ -130,6 +131,7 @@ define(["views/guestbook-page", "marionette", "backbone"],
 					spyOn($, "ajax"); //To avoid real submissions
 					gb.$el.find("form").submit();
 					expect(gb.$el.find("#message")).not.toHaveHtml(oldError);
+					expect(gb.$el.find("#message").is(":hidden")).toBeTruthy();
 				});
 
 				it("locks the input form upon submit", function() {
@@ -202,8 +204,10 @@ define(["views/guestbook-page", "marionette", "backbone"],
 						});
 
 						it("shows an error message upon submit", function() {
+							spyOn(gb, "showErrorMessage");
 							gb.$el.find("form").submit();
-							expect(gb.$el.find("#message")).not.toBeEmpty();
+							expect(gb.showErrorMessage).toHaveBeenCalled();
+							expect(gb.showErrorMessage.mostRecentCall.args[0]).not.toBeEmpty();
 						});
 
 					});
