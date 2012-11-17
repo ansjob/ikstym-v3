@@ -112,6 +112,7 @@ define([
 						this.$el.find("#message").html(
 							"Glöm inte att skriva in ditt namn!"
 						);
+						this.unlockForm();
 						return;
 					}
 					var that = this;
