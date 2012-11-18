@@ -89,7 +89,7 @@ define([
 				var data = {};
 				data.message = this.$el.find("form").find("#gb-input").val();
 
-				if (!data.message) {
+				if (data.message.trim().length < 2) {
 					this.showErrorMessage(
 					"Ett längre meddelande än så kan du nog skriva..."
 					);
@@ -151,6 +151,8 @@ define([
 			}
 
 		});
+
+		Guestbook.Entry = Entry;
 
 		return Guestbook;
 	});
