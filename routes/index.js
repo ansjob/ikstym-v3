@@ -1,4 +1,4 @@
-
+var utils = require("../logic/utils.js");
 var users = require("../logic/models/users.js");
 var auth = require("../logic/auth");
 var guestbook = require("../logic/models/guestbook");
@@ -107,7 +107,7 @@ exports.mappings = [
 
 			var entry = {
 				time_stamp : new Date().getTime(),
-				text : req.body.message,
+				text : utils.escape_html(req.body.message),
 				ip : req.ip,
 			};
 
@@ -139,8 +139,7 @@ exports.mappings = [
 					}
 				});
 			} else if (req.body.alias) {
-				//TODO Sanitize the shit out of this!
-				entry.alias = req.body.alias;
+				entry.alias = utils.escape_html(req.body.alias);
 				insert();
 			}
 		}
