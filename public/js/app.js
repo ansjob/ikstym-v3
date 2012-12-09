@@ -44,6 +44,7 @@ define([
 
 	App.addInitializer(renderUserInfoView);
 
+
 	App.vent.on("login:success", function(userdata) {
 		App.saveUserDetails(userdata);
 		renderUserInfoView();
@@ -56,6 +57,9 @@ define([
 	});
 
 	App.addInitializer(function(options) {
+
+		var userdata = localStorage.getItem("userdata");
+		if (userdata) $("#loginlink").html("Logga ut").attr("href", "#logout");
 
 		var router = new Router({
 			'mainRegion' : mainRegion, 

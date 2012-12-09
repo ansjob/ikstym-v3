@@ -25,15 +25,31 @@ define(["views/guestbook-page"], function(Guestbook) {
 			var entry, entryView;
 
 			beforeEach(function() {
-				entry = new Backbone.Model(sample_entry);
-				entryView = new Guestbook.Entry({ model: entry});
-				entryView.render();
+					entry = new Backbone.Model(sample_entry);
+					entryView = new Guestbook.Entry({ model: entry});
+					entryView.render();
 			});
 
-			it("has the text message in a special box", function() {
-				expect(entryView.$el.find(".guestbookcontent").find("div").html().trim())
-					.toEqual(sample_entry.text);
+
+			describe("regular user scenario", function() {
+
+				beforeEach(function() {
+					localStorage.removeItem("userdata");
+				});
+
+			});
+
+			describe("admin scenario", function() {
+
+				beforeEach(function() {
+					localStorage.setItem("userdata", JSON.stringify(sampleAdmin));
+				});
+
+				it("renders the IP if logged in as admin", function() {
+					expect(entryView.$el.html()).toContain(sample_entry.ip);
 					
+				});
+
 			});
 
 		});

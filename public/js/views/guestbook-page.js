@@ -27,6 +27,10 @@ define([
 			render: function() {
 				Marionette.ItemView.prototype.render.apply(this);
 				this.$el.addClass("entry").html(entry_t(this.model.toJSON()));
+				var user_data = $.parseJSON(localStorage.getItem("userdata"));
+				if (user_data && user_data.admin) {
+					this.$el.find(".ip-holder").html("IP:" + this.model.get("ip"));
+				}
 			}
 		}); 
 
@@ -60,15 +64,22 @@ define([
 			},
 
 			render: function() {
+
+				var userData = $.parseJSON(localStorage.getItem("userdata"));
+				var fetchParameters = {
+					page: 1
+				};
+				if (userData) {
+					fetchParameters.username = userData.username;
+					fetchParameters.hash = userData.hash;
+				}
 				this.collection.fetch({
-					data: {page: 1}
+					data: fetchParameters 
 				});
 				Marionette.CompositeView.prototype.render.apply(this);
 
 				var inputContainer = this.$el.find("form").find("#alias-container");
-				var userData = localStorage.getItem("userdata");
 				if (userData) {
-					userData = $.parseJSON(userData);
 					$(inputContainer).html("Postar som " + 
 					"<a href=\"#user/" + userData.username + "\">" + 
 						userData.nick + 

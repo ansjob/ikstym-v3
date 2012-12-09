@@ -67,19 +67,35 @@ exports.mappings = [
 		method: "get",
 		route: "/api/guestbook",
 		callback : function(req, res) {
-			guestbook.getAll(function(error, allEntries) {
-				if (error) {
-					res.status(500).send(error);
+
+
+			auth.authenticate({
+					username: req.query.username || "",
+					password: req.query.hash || ""
+				}, function(error, results) {
+				if(error) {
+					res.status(500).send("Ett fel uppstod vid säkerhetskoll för att hämta gästboksinlägg");
 					return;
 				}
-				for (var id in allEntries) {
-					var entry = allEntries[id];
-					if (entry.userdata){
-						delete entry.userdata.password;
+
+				console.log(results);
+
+				guestbook.getAll(function(error, allEntries) {
+					if (error) {
+						res.status(500).send(error);
+						return;
 					}
-				}
-				res.send(allEntries);
+					for (var id in allEntries) {
+						var entry = allEntries[id];
+						if(! (results.authenticated && results.admin) ) delete entry.ip;
+						if (entry.userdata){
+							delete entry.userdata.password;
+						}
+					}
+					res.send(allEntries);
+				});
 			});
+
 		}
 	},
 
