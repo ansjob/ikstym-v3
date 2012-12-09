@@ -155,6 +155,15 @@ define(["views/guestbook-page", "marionette", "backbone"],
 
 				});
 
+				it("reloads the guestbook upon successful submission", function() {
+					spyOn($, "ajax");
+					spyOn(gb.collection, "fetch");
+					gb.$el.find("form").submit();
+					var args = $.ajax.mostRecentCall.args[0];
+					args.success();
+					expect(gb.collection.fetch).toHaveBeenCalled();
+				});
+
 				it("unlocks the input form upon error callback", function() {
 					spyOn($, "ajax");
 					gb.$el.find("form").submit();

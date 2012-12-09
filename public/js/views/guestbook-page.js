@@ -125,6 +125,7 @@ define([
 			},
 
 			postSuccess : function() {
+				this.collection.fetch();
 				this.unlockForm();
 			},
 
