@@ -51,6 +51,9 @@ for (var idx = 0; idx < routes.mappings.length; idx++)
 		case "put":
 			app.put(mapping.route, mapping.callback);
 		break;
+		case "delete":
+			app.delete(mapping.route, mapping.callback); 
+		break;
 	}
 }
 

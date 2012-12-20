@@ -10,6 +10,21 @@ define([
 
 		var entry_t = _.template(entry_template);
 
+		var GuestbookAuthorizedPost = AuthorizedRequest.extend({
+			defaults: {
+				type: "post",
+				url: "/api/guestbook"
+			}
+		});
+
+		var DeleteGuestbookEntry = AuthorizedRequest.extend({
+			defaults : {
+				type: "delete",
+				url : "/api/guestbook"
+			}
+		});
+
+
 		var Entry = Marionette.ItemView.extend({
 
 			template : entry_template,
@@ -30,19 +45,56 @@ define([
 				var user_data = $.parseJSON(localStorage.getItem("userdata"));
 				if (user_data && user_data.admin) {
 					this.$el.find(".ip-holder").html("IP:" + this.model.get("ip"));
+					var deleteLink = this.deleteLink();
+					this.$el.find(".delete-holder").html(deleteLink);
 				}
+			},
+
+			deleteLink : function() {
+				var link = document.createElement("a");
+				var that = this;
+				$(link).html("Ta bort")
+					.addClass("delete")
+					.attr("href", "#guestbook")
+					.click(function() {
+						that.setStatus("Vänta...");
+						var req = new DeleteGuestbookEntry({
+							data: {
+								id: that.model.get("id")
+							},
+							error: function(err) {
+								that.setStatus(err.responseText);
+							},
+							success : function() {
+								that.close();
+							}
+						});
+						req.execute();
+					});
+
+				return link;
+			},
+
+			setStatus : function(msg) {
+				$(this.el).find(".status").html(msg);
 			}
 		}); 
 
-		var GuestbookAuthorizedPost = AuthorizedRequest.extend({
-			defaults: {
-				type: "post",
-				url: "/api/guestbook"
-			}
-		});
 
 		var GuestbookCollection = Backbone.Collection.extend({
-			url: "/api/guestbook"
+			url: "/api/guestbook",
+			fetch: function() {
+				if (arguments.length == 0) arguments = [{data: {}}];
+				var userdata = localStorage.getItem("userdata");
+				if (userdata) {
+					userdata = $.parseJSON(userdata);
+					if (userdata.admin) {
+						arguments[0].data.username = userdata.username;
+						arguments[0].data.hash = userdata.hash;
+					}
+				}
+				Backbone.Collection.prototype.fetch.apply(this, arguments);
+			}
 		});
 
 		var Guestbook = Marionette.CompositeView.extend({

@@ -58,11 +58,10 @@ define(["views/guestbook-page", "marionette", "backbone"],
 	return function() {
 		describe("Guestbook", function() {
 
-			var collection, gb, vent;
+			var gb, vent;
 
 			beforeEach(function() {
 				vent = new Marionette.EventAggregator();
-				collection = new Backbone.Collection(sampleEntries);
 				gb = new Guestbook();
 			});
 
@@ -246,6 +245,14 @@ define(["views/guestbook-page", "marionette", "backbone"],
 						expect(
 							gb.$el.find("form").find("input[name='alias']").length
 						).toEqual(0);
+					});
+
+					it("authenticates requests through the collection", function() {
+						spyOn($, "ajax");
+						gb.collection.fetch();
+						var args = $.ajax.mostRecentCall.args[0];
+						expect(args.data.hash).toEqual(sampleUserData.hash);
+						expect(args.data.username).toEqual(sampleUserData.username);
 					});
 
 					it("has a link to the user's profile instead", function() {

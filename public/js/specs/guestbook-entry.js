@@ -47,7 +47,41 @@ define(["views/guestbook-page"], function(Guestbook) {
 
 				it("renders the IP if logged in as admin", function() {
 					expect(entryView.$el.html()).toContain(sample_entry.ip);
-					
+				});
+
+				it("renders a delete link", function() {
+					expect(entryView.$el.find(".delete").length).toEqual(1);
+				});
+
+				describe("Delete link", function() {
+					var link;
+					beforeEach(function() {
+						link = entryView.$el.find(".delete");
+					});
+
+					it("sets the status message to a wait message", function() {
+						spyOn($, "ajax");
+						$(link).click();
+						expect(entryView.$el.find(".status")).toHaveHtml("Vänta...");
+					});
+
+					it("sets the responseText as error", function() {
+						spyOn($, "ajax");
+						$(link).click();
+						var args = $.ajax.mostRecentCall.args[0];
+						var sampleRes = "Foo error msg";
+						args.error({responseText : sampleRes});
+						expect(entryView.$el.find(".status")).toHaveHtml(sampleRes);
+					});
+
+					it("closes on error", function() {
+						spyOn($, "ajax");
+						$(link).click();
+						var args = $.ajax.mostRecentCall.args[0];
+						spyOn(entryView, "close");
+						args.success();
+						expect(entryView.close).toHaveBeenCalled();
+					});
 				});
 
 			});

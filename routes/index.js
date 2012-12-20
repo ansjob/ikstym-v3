@@ -78,8 +78,6 @@ exports.mappings = [
 					return;
 				}
 
-				console.log(results);
-
 				guestbook.getAll(function(error, allEntries) {
 					if (error) {
 						res.status(500).send(error);
@@ -130,17 +128,51 @@ exports.mappings = [
 					if (error) {
 						res.status(500).send("Server failure");
 					}
-					else if (results.authenticated) {
+					else if (results.authenticated && results.admin && !results.locked) {
 						entry.username = req.body.username;
 						insert();
 					}
 					else {
-						res.status(401).send("Access denied!");
+						res.status(401).send("Du har inte tillåtelse att göra detta");
 					}
 				});
 			} else if (req.body.alias) {
 				entry.alias = utils.escape_html(req.body.alias);
 				insert();
+			}
+		}
+	},
+
+//Delete guestbook entry
+	{
+		method: "delete",
+		route: "/api/guestbook",
+		callback : function(req, res) {
+			if (req.body.id) {
+				auth.authenticate({
+					username: req.body.username,
+					password: req.body.hash
+				},
+				function(error, results) {
+					if (error) {
+						res.status(500).send("Servern misslyckades: " + error);
+					}
+					else if (results.authenticated && results.admin) {
+						guestbook.deleteEntry(req.body.id, function(delError) {
+							if (delError) {
+								res.status(500).send("Servern misslyckades: " + delError);
+							}
+							else {
+								res.send("OK");
+							}
+						});
+					}
+					else {
+						res.status(401).send("Access denied");
+					}
+				});
+			} else {
+				res.status(400).send("Inget ID angett");
 			}
 		}
 	}
