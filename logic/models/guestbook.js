@@ -63,7 +63,14 @@ module.exports = {
 	deleteEntry: function(id, callback) {
 		id = parseInt(id);
 		db.run("delete from guestbook where id = $id", {$id : id}, callback);
-	} 
+	},
+
+	getPage : function(pageNum, callback) {
+		var sql = "select * from guestbook order by id desc limit {{limit}} offset {{offset}}".replace("{{offset}}", this.PAGE_SIZE * pageNum).replace("{{limit}}", this.PAGE_SIZE);
+		db.all(sql, callback);
+	},
+
+	PAGE_SIZE : 20
 };
 
 exports._properties = {

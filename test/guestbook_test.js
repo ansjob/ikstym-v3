@@ -168,6 +168,62 @@ module.exports = {
 			guestbook.insert(loggedinSample, cb);
 		}
  
+	},
+
+	paginationTests: {
+
+		setUp : function(cb) {
+			this.test_size = 1337;
+			var tests = [];
+			var pending = 0;
+			var done_issuing = false;
+			var insert = function(idx, entry) {
+				pending++;
+				guestbook.insert(entry, function(err) {
+					if(err) {
+					}
+					if (--pending == 0 && done_issuing) {
+						cb();
+					}
+				});
+			};
+			for (var i = 0; i < this.test_size; ++i) {
+				tests[i] = {};
+				for (var key in anonSample) {
+					tests[i][key] = anonSample[key];
+				}
+				insert(i, tests[i]);
+			}
+			done_issuing = true;
+		},
+
+		testAllEntered : function(test) {
+			var expected = this.test_size;
+			test.expect(2);
+			guestbook.getAll(function(err, entries) {
+				test.equals(null, err);
+				test.equals(expected, entries.length);
+				test.done();
+			});
+		},
+
+		testGettingFirstPageIsRightSize : function(test) {
+			test.expect(1);
+			guestbook.getPage(0, function(err, entries) {
+				test.equals(20, entries.length);
+				test.done();
+			});
+		},
+
+		testGettingFirstPageIsNewest : function(test) {
+			test.expect(1);
+			var test_size = this.test_size;
+			guestbook.getPage(0, function(err, entries) {
+				test.equals(test_size, entries[0].id);
+				test.done();
+			});
+		}
+
 	}
 
 };

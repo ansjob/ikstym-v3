@@ -68,7 +68,6 @@ exports.mappings = [
 		route: "/api/guestbook",
 		callback : function(req, res) {
 
-
 			auth.authenticate({
 					username: req.query.username || "",
 					password: req.query.hash || ""
@@ -78,7 +77,8 @@ exports.mappings = [
 					return;
 				}
 
-				guestbook.getAll(function(error, allEntries) {
+				var page = parseInt(req.query.page) || 0;
+				guestbook.getPage(page, function(error, allEntries) {
 					if (error) {
 						res.status(500).send(error);
 						return;
@@ -104,7 +104,7 @@ exports.mappings = [
 		callback: function(req, res) {
 
 			var entry = {
-				time_stamp : new Date().getTime(),
+				timestamp : new Date().getTime(),
 				text : utils.escape_html(req.body.message),
 				ip : req.ip,
 			};
