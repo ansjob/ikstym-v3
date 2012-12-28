@@ -147,6 +147,7 @@ define([
 
 			postSuccess : function() {
 				this.collection.fetch();
+				this.$el.find("textarea").val('');
 				this.unlockForm();
 			},
 

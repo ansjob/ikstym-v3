@@ -120,7 +120,10 @@ exports.mappings = [
 					}
 				});
 			};
-			if (req.body.username || req.cookies) {
+			if (req.body.alias) {
+				entry.alias = utils.escape_html(req.body.alias);
+				insert();
+			} else {
 				auth.authenticate({
 					req : req
 				}, function(error, results) {
@@ -135,10 +138,7 @@ exports.mappings = [
 						res.status(401).send("Du har inte tillåtelse att göra detta");
 					}
 				});
-			} else if (req.body.alias) {
-				entry.alias = utils.escape_html(req.body.alias);
-				insert();
-			}
+			} 
 		}
 	},
 

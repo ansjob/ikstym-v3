@@ -163,6 +163,14 @@ define(["views/guestbook-page", "marionette", "backbone", "auth"],
 					expect(gb.collection.fetch).toHaveBeenCalled();
 				});
 
+				it("resets the form upon successful submission", function() {
+					spyOn($, "ajax");
+					gb.$el.find("form").submit();
+					var args = $.ajax.mostRecentCall.args[0];
+					args.success();
+					expect(gb.$el.find("#gb-input").val()).toEqual('');
+				});
+
 				it("unlocks the input form upon error callback", function() {
 					spyOn($, "ajax");
 					gb.$el.find("form").submit();
