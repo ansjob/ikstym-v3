@@ -52,7 +52,6 @@ define([
 						that.setStatus("Vänta...");
 						that.model.destroy({
 							error : function(model, response) {
-								console.log(response);
 								that.setStatus(response.responseText);
 							},
 							success : function(model, response) {
