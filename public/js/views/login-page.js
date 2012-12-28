@@ -1,9 +1,10 @@
 define([
+	"auth",
 	"marionette", 
 	"text!templates/login-page.html", 
 	"views/error_dialog",
 	"utils"], 
-	function(Marionette, template, ErrorDialog, utils) {
+	function(Auth, Marionette, template, ErrorDialog, utils) {
 
 
 		var DEBUG_LEVEL = 0;
@@ -24,7 +25,7 @@ define([
 
 			render: function() {
 				DEBUG(2, "rendering!");
-				localStorage.removeItem("userdata");
+				Auth.clearData();
 				this.vent.trigger("logout");
 				this.$el.html(template);
 				var form = this.$el.find("form")[0];

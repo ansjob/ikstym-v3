@@ -1,5 +1,6 @@
 define(
 	[
+		"auth",
 		"backbone",
 		"underscore",
 		"views/login-page",
@@ -8,6 +9,7 @@ define(
 		"views/guestbook-page"
 	]
 	,function(
+		Auth,
 		Backbone, _,
 		LoginView,
 		StartView,
@@ -71,7 +73,7 @@ define(
 		},
 
 		logoutGotoStart: function() {
-			localStorage.removeItem("userdata");
+			Auth.clearData();
 			this.vent.trigger("logout");
 			this.gotoStart();
 		},

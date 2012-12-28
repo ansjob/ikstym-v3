@@ -27,7 +27,7 @@ module.exports = {
 				function(error, user) {
 					callback(error, {
 						admin : user.admin ? true : false,
-						locked : user.locked ? true : false
+						locked : user.locked ? true : false,
 					});
 				}
 			);
@@ -46,7 +46,8 @@ module.exports = {
 					callback(null, {
 						authenticated : true,
 						admin : user.admin,
-						locked : user.locked
+						locked : user.locked,
+						user : user
 					});
 				}
 			});

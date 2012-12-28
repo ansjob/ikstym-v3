@@ -1,4 +1,4 @@
-define(["views/login-status-view"], function(AccountStatusView) {
+define(["auth", "views/login-status-view"], function(Auth, AccountStatusView) {
 	return function() {
 
 		describe("Login status view", function() {
@@ -9,12 +9,16 @@ define(["views/login-status-view"], function(AccountStatusView) {
 						username : "testuser123",
 						first_name : "Andreas",
 						last_name : "Sjöberg",
-						hash : "testhash123",
+						password : "testhash123",
 						isAdmin : false
 				};
 
 				beforeEach(function() {
-					localStorage.setItem("userdata", JSON.stringify(testUser));
+					Auth.saveUserDetails(testUser);
+				});
+
+				afterEach(function() {
+					Auth.clearData();
 				});
 
 				it("sets the full user name in the view", function() {

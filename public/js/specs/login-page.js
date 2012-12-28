@@ -1,5 +1,5 @@
-define(["views/login-page", "marionette", "utils"], 
-	function(LoginView, Marionette, Utils) {
+define(["auth", "views/login-page", "marionette", "utils"], 
+	function(Auth, LoginView, Marionette, Utils) {
 
 	return function() {
 
@@ -15,7 +15,7 @@ define(["views/login-page", "marionette", "utils"],
 			var loginView;
 
 			beforeEach(function() {
-				localStorage.removeItem("userdata");
+				Auth.clearData();
 				loginView = new LoginView({
 					vent: vent
 				});
@@ -103,23 +103,22 @@ define(["views/login-page", "marionette", "utils"],
 			var view;
 			var userData = {
 				username : "testuser",
-				hash : "test123",
+				password : "test123",
 				first_name : "Test",
 				last_name : "Testsson",
 				email: "email@test.se",
 				nick: "TestArn"
 			};
 			beforeEach(function() {
-				localStorage.setItem("userdata", JSON.stringify(userData));
+				Auth.saveUserDetails(userData);
 				view = new LoginView({
 					vent: vent
 				});
 			});
 
-			it("deletes the contents in the localStorage", function() {
+			it("deletes the contents in the cookies", function() {
 				view.render();
-				var dataInStorage = localStorage.getItem("userdata");
-				expect(dataInStorage).toBeFalsy();
+				expect(Auth.hasUserData()).toBeFalsy();
 			});
 
 			it("triggers a logout", function() {

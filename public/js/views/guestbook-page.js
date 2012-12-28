@@ -2,20 +2,13 @@ define([
 	"backbone", 
 	"marionette",
 	"underscore",
-	"authenticated-request",
+	"auth",
 	"text!templates/guestbook.html",
 	"text!templates/guestbook-entry.html"
 	], 
-	function(Backbone, Marionette, _, AuthorizedRequest, gb_template, entry_template) {
+	function(Backbone, Marionette, _, Auth, gb_template, entry_template) {
 
 		var entry_t = _.template(entry_template);
-
-		var GuestbookAuthorizedPost = AuthorizedRequest.extend({
-			defaults: {
-				type: "post",
-				url: "/api/guestbook"
-			}
-		});
 
 		var Entry = Marionette.ItemView.extend({
 
@@ -23,8 +16,8 @@ define([
 			tagName: "div",
 
 			initialize: function() {
-				var userdata = this.model.get("userdata");
-				if (userdata) {
+				if (this.model.get("userdata")) {
+					var userdata = this.model.get("userdata");
 					this.model.set("alias", 
 					"<a href = \"#user/" + userdata.username + "\">" + 
 					userdata.nick + "</a>");
@@ -34,8 +27,8 @@ define([
 			render: function() {
 				Marionette.ItemView.prototype.render.apply(this);
 				this.$el.addClass("entry").html(entry_t(this.model.toJSON()));
-				var user_data = $.parseJSON(localStorage.getItem("userdata"));
-				if (user_data && user_data.admin) {
+
+				if (Auth.hasUserData() && Auth.getUserData().admin) {
 					this.$el.find(".ip-holder").html("IP:" + this.model.get("ip"));
 					var deleteLink = this.deleteLink();
 					this.$el.find(".delete-holder").html(deleteLink);
@@ -72,18 +65,6 @@ define([
 
 		var GuestbookCollection = Backbone.Collection.extend({
 			url: "/api/guestbook",
-			fetch: function() {
-				if (arguments.length == 0) arguments = [{data: {}}];
-				var userdata = localStorage.getItem("userdata");
-				if (userdata) {
-					userdata = $.parseJSON(userdata);
-					if (userdata.admin) {
-						arguments[0].data.username = userdata.username;
-						arguments[0].data.hash = userdata.hash;
-					}
-				}
-				Backbone.Collection.prototype.fetch.apply(this, arguments);
-			}
 		});
 
 		var Guestbook = Marionette.CompositeView.extend({
@@ -106,21 +87,12 @@ define([
 
 			render: function() {
 
-				var userData = $.parseJSON(localStorage.getItem("userdata"));
-				var fetchParameters = {
-					page: 0
-				};
-				if (userData) {
-					fetchParameters.username = userData.username;
-					fetchParameters.hash = userData.hash;
-				}
-				this.collection.fetch({
-					data: fetchParameters 
-				});
+				var userData = Auth.getUserData();
+				this.collection.fetch();
 				Marionette.CompositeView.prototype.render.apply(this);
 
 				var inputContainer = this.$el.find("form").find("#alias-container");
-				if (userData) {
+				if (Auth.hasUserData()) {
 					$(inputContainer).html("Postar som " + 
 					"<a href=\"#user/" + userData.username + "\">" + 
 						userData.nick + 
@@ -148,13 +120,10 @@ define([
 					return;
 				}
 				this.lockForm();
-				if (localStorage.getItem("userdata")) {
-					var req = new GuestbookAuthorizedPost({
-						data: data,
-						success: this.postSuccess,
-						error: this.postError
-					});
-					req.execute();
+				if (Auth.hasUserData()) {
+					$.post("/api/guestbook",data)
+					.success(this.postSuccess)
+					.error(this.postError);
 				}
 
 				else {

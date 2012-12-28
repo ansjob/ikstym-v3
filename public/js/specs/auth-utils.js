@@ -10,16 +10,15 @@ define(["auth"], function(Auth) {
 			};
 			describe("Has User Data", function() {
 				beforeEach(function() {
-					$.cookie("userdata", JSON.stringify(sampleUser));
+					for (var key in sampleUser) {
+						$.cookie(key, sampleUser[key]);
+					}
 				});
 
 				afterEach(function() {
-					$.removeCookie("userdata");
-				});
-
-				it("has the user data as a cookie", function() {
-					var fromCookie = $.parseJSON($.cookie("userdata"));
-					expect(sampleUser).toEqual(fromCookie);
+					for (var key in sampleUser) {
+						$.removeCookie(key);
+					}
 				});
 
 				it("indicates there is a user", function() {
@@ -42,7 +41,9 @@ define(["auth"], function(Auth) {
 
 			describe("Has No User Data", function() {
 				beforeEach(function() {
-					$.removeCookie("userdata");
+					for (var key in sampleUser) {
+						$.removeCookie(key);
+					}
 				});
 
 				it("indicates that the userdata is not there", function() {
@@ -69,7 +70,8 @@ define(["auth"], function(Auth) {
 
 			describe("Has Falsy User Data", function() {
 				beforeEach(function() {
-					$.cookie("userdata", "{dfasdsdagf : asdasdasdfg \\\newfsdf\n'''\"}");
+					$.cookie("username", null);
+					$.cookie("password", "");
 				});
 
 				it("indicates that the userdata is not there", function() {

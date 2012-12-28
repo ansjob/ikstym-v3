@@ -108,6 +108,7 @@ exports.mappings = [
 				ip : req.ip,
 			};
 
+
 			var insert = function() {
 				guestbook.insert(entry, function(error) {
 					if (error) {
@@ -127,7 +128,7 @@ exports.mappings = [
 						res.status(500).send("Server failure");
 					}
 					else if (results.authenticated && results.admin && !results.locked) {
-						entry.username = req.body.username;
+						entry.username = results.user.username;
 						insert();
 					}
 					else {

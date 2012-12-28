@@ -6,8 +6,6 @@ define([
 		"specs/login-page",
 		"specs/router",
 		"specs/hash_util",
-		"specs/local-storage",
-		"specs/authenticated-requests",
 		"specs/login-status-view",
 		"specs/guestbook",
 		"specs/guestbook-entry",
@@ -16,8 +14,6 @@ define([
 		LoginTest,
 		RouterTest,
 		HashUtilTest,
-		LocalStorageTest,
-		AuthenticatedRequestsTest,
 		LoginStatusViewTest,
 		GuestbookTests,
 		GuestbookEntryTests,
@@ -26,8 +22,6 @@ define([
 		LoginTest();
 		RouterTest();
 		HashUtilTest();
-		LocalStorageTest();
-		AuthenticatedRequestsTest();
 		LoginStatusViewTest();
 		GuestbookTests();
 		GuestbookEntryTests();

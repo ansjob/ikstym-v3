@@ -1,11 +1,12 @@
 define([
+	"auth",
 	"marionette", 
 	"backbone", 
 	"router", 
 	"underscore", 
 	"views/login-status-view"
 	], 
-	function(Marionette, Backbone, Router, _,
+	function(Auth, Marionette, Backbone, Router, _,
 		LoginStatusView) {
 
 	var IKApp = Marionette.Application.extend({
@@ -13,9 +14,6 @@ define([
 			_.bindAll(this);
 		},
 
-		saveUserDetails : function(userdata) {
-			localStorage.setItem("userdata", JSON.stringify(userdata));
-		}
 	});
 
 	var App = new IKApp();
@@ -35,31 +33,35 @@ define([
 	});
 
 	var renderUserInfoView = function(options) {
-		var userdata = localStorage.getItem("userdata");
-		if (userdata) userdata = $.parseJSON(userdata);
-		var view = new LoginStatusView(userdata);
-		view.render();
-		statusRegion.show(view);
+		if (Auth.hasUserData()) {
+			var view = new LoginStatusView(Auth.getUserData());
+			view.render();
+			statusRegion.show(view);
+		}
+	};
+	var hideUserInfoView = function() {
+		statusRegion.reset();
 	};
 
 	App.addInitializer(renderUserInfoView);
 
 
 	App.vent.on("login:success", function(userdata) {
-		App.saveUserDetails(userdata);
+		Auth.saveUserDetails(userdata);
 		renderUserInfoView();
 		$("#loginlink").html("Logga ut").attr("href", "#logout");
 	});
 
 	App.vent.on("logout", function() {
-		renderUserInfoView();
+		Auth.clearData();
+		hideUserInfoView();
 		$("#loginlink").html("Logga in").attr("href", "#login");
 	});
 
 	App.addInitializer(function(options) {
 
-		var userdata = localStorage.getItem("userdata");
-		if (userdata) $("#loginlink").html("Logga ut").attr("href", "#logout");
+		
+		if (Auth.hasUserData()) $("#loginlink").html("Logga ut").attr("href", "#logout");
 
 		var router = new Router({
 			'mainRegion' : mainRegion, 

@@ -1,10 +1,13 @@
-define(["views/guestbook-page"], function(Guestbook) {
+define(["auth", "views/guestbook-page", "marionette"], function(Auth, Guestbook, Marionette) {
 	return function() {
 
 		describe("Guestbook Entry renderer", function() {
 
+			var vent;
+
 			var sampleAdmin = {
 				username : 'testusername',
+				password : 'testhash123',
 				first_name: 'Test',
 				last_name: 'Testsson',
 				email: 'testarn@testplace.se',
@@ -27,6 +30,7 @@ define(["views/guestbook-page"], function(Guestbook) {
 			var entry, entryView;
 
 			beforeEach(function() {
+					var vent = new Marionette.EventAggregator();
 					entry = new GBEntry(sample_entry);
 					entryView = new Guestbook.Entry({ model: entry});
 					entryView.render();
@@ -36,7 +40,7 @@ define(["views/guestbook-page"], function(Guestbook) {
 			describe("regular user scenario", function() {
 
 				beforeEach(function() {
-					localStorage.removeItem("userdata");
+					Auth.clearData();
 				});
 
 			});
@@ -44,7 +48,12 @@ define(["views/guestbook-page"], function(Guestbook) {
 			describe("admin scenario", function() {
 
 				beforeEach(function() {
-					localStorage.setItem("userdata", JSON.stringify(sampleAdmin));
+					Auth.saveUserDetails(sampleAdmin);
+					entryView.render();
+				});
+
+				afterEach(function() {
+					Auth.clearData();
 				});
 
 				it("renders the IP if logged in as admin", function() {
@@ -72,6 +81,7 @@ define(["views/guestbook-page"], function(Guestbook) {
 						$(link).click();
 						expect(entry.destroy).toHaveBeenCalled();
 					});
+
 
 					it("sets the responseText as error", function() {
 						spyOn(entry, "destroy");

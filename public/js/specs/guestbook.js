@@ -1,5 +1,5 @@
-define(["views/guestbook-page", "marionette", "backbone"], 
-	function(Guestbook, Marionette, Backbone) {
+define(["views/guestbook-page", "marionette", "backbone", "auth"], 
+	function(Guestbook, Marionette, Backbone, Auth) {
 	var sampleEntries = [
   {
     "id": 3,
@@ -48,6 +48,7 @@ define(["views/guestbook-page", "marionette", "backbone"],
 		"first_name": "Andreas",
 		"last_name": "Sjöberg",
 		"hash" : "somehash876576",
+		"password" : "somehash876576",
 		"email": "ansjob@kth.se",
 		"phone": 123456,
 		"nick": "Sjöberg",
@@ -76,10 +77,9 @@ define(["views/guestbook-page", "marionette", "backbone"],
 
 			it("makes a call to fetch the collection on render", 
 			function() {
-				spyOn($, "ajax");
+				spyOn(gb.collection, "fetch");
 				gb.render();
-				var args = $.ajax.mostRecentCall.args[0]; 
-				expect(args.data.page).toEqual(0);
+				expect(gb.collection.fetch).toHaveBeenCalled();
 			});
 
 			it("renders the items when the ajax callback is issued", function() {
@@ -188,7 +188,9 @@ define(["views/guestbook-page", "marionette", "backbone"],
 					var aliasInput;
 
 					beforeEach(function() {
-						localStorage.removeItem("userdata");
+						$.removeCookie("username");
+						$.removeCookie("password");
+						$.removeCookie("admin");
 						gb.render();
 						gb.$el.find("input[name='alias']").val("testalias");
 						gb.$el.find("textarea[name='gb-input']").html("testmessage");
@@ -235,10 +237,13 @@ define(["views/guestbook-page", "marionette", "backbone"],
 				describe("userdata exists", function() {
 
 					beforeEach(function() {
-						localStorage.setItem("userdata", JSON.stringify(sampleUserData));
+						Auth.saveUserDetails(sampleUserData);
 						gb.render();
-						gb.$el.find("input[name='alias']").val("testalias");
 						gb.$el.find("textarea[name='gb-input']").html("testmessage");
+					});
+
+					afterEach(function() {
+						Auth.clearData();
 					});
 
 					it("has no alias input", function() {
@@ -247,28 +252,11 @@ define(["views/guestbook-page", "marionette", "backbone"],
 						).toEqual(0);
 					});
 
-					it("authenticates requests through the collection", function() {
-						spyOn($, "ajax");
-						gb.collection.fetch();
-						var args = $.ajax.mostRecentCall.args[0];
-						expect(args.data.hash).toEqual(sampleUserData.hash);
-						expect(args.data.username).toEqual(sampleUserData.username);
-					});
 
 					it("has a link to the user's profile instead", function() {
 						expect(gb.$el.find("form").find("#alias-container").
 							find("a").attr("href"))
 						.toEqual("#user/" + sampleUserData.username);
-					});
-
-					it("posts the username and hash", function() {
-						spyOn($, "ajax");
-						var entry = "some message posted in the guestbook";
-						gb.$el.find("#gb.input").html(entry);
-						gb.$el.find("form").submit();
-						var args = $.ajax.mostRecentCall.args[0];
-						expect(args.data.username).toEqual(sampleUserData.username);
-						expect(args.data.hash).toEqual(sampleUserData.hash);
 					});
 
 				});
