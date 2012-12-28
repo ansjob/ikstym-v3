@@ -9,12 +9,17 @@ define([], function() {
 			"text"					: "lib/text",
 			"jquery"				: "lib/jquery-1.8.0.min",
 			"order"					: "lib/order",
-			"backbone.paginator"	: "lib/backbone.paginator.min"
+			"backbone.paginator"	: "lib/backbone.paginator.min",
+			"jquery.cookies"		: "lib/jquery.cookie"
 		},
 		shim : {
 			'backbone' : {
 				deps : ["underscore"],
 				exports : 'Backbone'
+			},
+			'jquery.cookie' : {
+				deps : ["jquery"],
+				exports : "$"
 			}
 		}
 	});

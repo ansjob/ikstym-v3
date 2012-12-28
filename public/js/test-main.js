@@ -10,7 +10,8 @@ define([
 		"specs/authenticated-requests",
 		"specs/login-status-view",
 		"specs/guestbook",
-		"specs/guestbook-entry"
+		"specs/guestbook-entry",
+		"specs/auth-utils"
 	], function(
 		LoginTest,
 		RouterTest,
@@ -19,7 +20,8 @@ define([
 		AuthenticatedRequestsTest,
 		LoginStatusViewTest,
 		GuestbookTests,
-		GuestbookEntryTests
+		GuestbookEntryTests,
+		AuthUtilTests
 	) {
 		LoginTest();
 		RouterTest();
@@ -29,6 +31,7 @@ define([
 		LoginStatusViewTest();
 		GuestbookTests();
 		GuestbookEntryTests();
+		AuthUtilTests();
 
 		var jasmineEnv = jasmine.getEnv();
 		jasmineEnv.updateInterval = 1000;

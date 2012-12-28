@@ -19,13 +19,15 @@ define(["views/guestbook-page"], function(Guestbook) {
 				ip: "192.168.0.15",
 				text: "sample entry",
 				timestamp: 0,
-				userdata : sampleAdmin
+				userdata : sampleAdmin,
 			};
+
+			var GBEntry = Backbone.Model.extend({urlRoot : "/api/guestbook"});
 
 			var entry, entryView;
 
 			beforeEach(function() {
-					entry = new Backbone.Model(sample_entry);
+					entry = new GBEntry(sample_entry);
 					entryView = new Guestbook.Entry({ model: entry});
 					entryView.render();
 			});
@@ -60,28 +62,36 @@ define(["views/guestbook-page"], function(Guestbook) {
 					});
 
 					it("sets the status message to a wait message", function() {
-						spyOn($, "ajax");
+						spyOn(entry, "destroy");
 						$(link).click();
 						expect(entryView.$el.find(".status")).toHaveHtml("Vänta...");
 					});
 
-					it("sets the responseText as error", function() {
-						spyOn($, "ajax");
+					it("calls destroy", function() {
+						spyOn(entry, "destroy");
 						$(link).click();
-						var args = $.ajax.mostRecentCall.args[0];
+						expect(entry.destroy).toHaveBeenCalled();
+					});
+
+					it("sets the responseText as error", function() {
+						spyOn(entry, "destroy");
+						$(link).click();
+						var args = entry.destroy.mostRecentCall.args[0];
 						var sampleRes = "Foo error msg";
-						args.error({responseText : sampleRes});
+						args.error(entry, {responseText : sampleRes});
 						expect(entryView.$el.find(".status")).toHaveHtml(sampleRes);
 					});
 
-					it("closes on error", function() {
-						spyOn($, "ajax");
+					it("doesn't remove the view on server error", function() {
+						spyOn(entry, "destroy");
+						var spy = jasmine.createSpy();
+						entryView.on("close", spy);
 						$(link).click();
-						var args = $.ajax.mostRecentCall.args[0];
-						spyOn(entryView, "close");
-						args.success();
-						expect(entryView.close).toHaveBeenCalled();
+						var args = entry.destroy.mostRecentCall.args[0];
+						args.error(entry, {responseText : "foo"});
+						expect(spy).not.toHaveBeenCalled();
 					});
+
 				});
 
 			});

@@ -144,9 +144,10 @@ exports.mappings = [
 //Delete guestbook entry
 	{
 		method: "delete",
-		route: "/api/guestbook",
+		route: "/api/guestbook/:id?",
 		callback : function(req, res) {
-			if (req.body.id) {
+			console.log
+			if (req.route.params.id) {
 				auth.authenticate({
 					req : req
 				},
@@ -155,12 +156,12 @@ exports.mappings = [
 						res.status(500).send("Servern misslyckades: " + error);
 					}
 					else if (results.authenticated && results.admin) {
-						guestbook.deleteEntry(req.body.id, function(delError) {
+						guestbook.deleteEntry(req.route.params.id, function(delError) {
 							if (delError) {
 								res.status(500).send("Servern misslyckades: " + delError);
 							}
 							else {
-								res.send("OK");
+								res.send("{}");
 							}
 						});
 					}

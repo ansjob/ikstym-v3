@@ -17,14 +17,6 @@ define([
 			}
 		});
 
-		var DeleteGuestbookEntry = AuthorizedRequest.extend({
-			defaults : {
-				type: "delete",
-				url : "/api/guestbook"
-			}
-		});
-
-
 		var Entry = Marionette.ItemView.extend({
 
 			template : entry_template,
@@ -58,18 +50,16 @@ define([
 					.attr("href", "#guestbook")
 					.click(function() {
 						that.setStatus("Vänta...");
-						var req = new DeleteGuestbookEntry({
-							data: {
-								id: that.model.get("id")
+						that.model.destroy({
+							error : function(model, response) {
+								console.log(response);
+								that.setStatus(response.responseText);
 							},
-							error: function(err) {
-								that.setStatus(err.responseText);
-							},
-							success : function() {
+							success : function(model, response) {
 								that.close();
-							}
+							},
+							wait : true
 						});
-						req.execute();
 					});
 
 				return link;
