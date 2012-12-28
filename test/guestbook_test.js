@@ -60,7 +60,8 @@ module.exports = {
 		test.expect(props.length + 2);
 		guestbook.insert(anonSample, function(error) {
 			test.equal(null, error);
-			guestbook.getAll(function(error, allEntries) {
+			guestbook.getAll(
+				function(error, allEntries) {
 				test.equal(null, error);
 				var entry = allEntries[0]; //allEntries is either an array or map
 				for (var i in props) {
@@ -135,8 +136,8 @@ module.exports = {
 			test.expect(4);
 			guestbook.insert(loggedinSample, function(error) {
 				test.equals(null, error);
-				guestbook.getAll(function(error, all) {
-					test.equals(null, error);
+				guestbook.getAll(function(u_error, all) {
+					test.equals(null, u_error);
 					var entry = all[0];
 					test.equal(undefined, entry.alias);
 					test.deepEqual(sampleUser, entry.userdata);
@@ -150,7 +151,7 @@ module.exports = {
 			var runTest = function() {
 				guestbook.deleteEntry(1, function(error) {
 					test.equals(null, error);
-					guestbook.getFiltered(function(entry) { return entry.id == 1;},
+					guestbook.getSingleEntry(1,
 						function(error2, filtered) {
 							test.equals(null, error2);
 							test.equals(0, filtered.length);

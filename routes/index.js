@@ -48,6 +48,8 @@ exports.mappings = [
 				}
 				else if (results.authenticated) {
 					users.getByUsername(username, function(error, user) {
+						res.cookie("username", user.username, {maxAge : 1000*60*60*48});
+						res.cookie("password", user.password, {maxAge : 1000*60*60*48});
 						delete user.password;
 						res.send(user);
 					});
@@ -68,10 +70,7 @@ exports.mappings = [
 		route: "/api/guestbook",
 		callback : function(req, res) {
 
-			auth.authenticate({
-					username: req.query.username || "",
-					password: req.query.hash || ""
-				}, function(error, results) {
+			auth.authenticate({req : req}, function(error, results) {
 				if(error) {
 					res.status(500).send("Ett fel uppstod vid säkerhetskoll för att hämta gästboksinlägg");
 					return;
@@ -120,10 +119,9 @@ exports.mappings = [
 					}
 				});
 			};
-			if (req.body.username) {
+			if (req.body.username || req.cookies) {
 				auth.authenticate({
-					username: req.body.username,
-					password: req.body.hash
+					req : req
 				}, function(error, results) {
 					if (error) {
 						res.status(500).send("Server failure");
@@ -150,8 +148,7 @@ exports.mappings = [
 		callback : function(req, res) {
 			if (req.body.id) {
 				auth.authenticate({
-					username: req.body.username,
-					password: req.body.hash
+					req : req
 				},
 				function(error, results) {
 					if (error) {

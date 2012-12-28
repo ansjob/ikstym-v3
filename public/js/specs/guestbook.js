@@ -79,7 +79,7 @@ define(["views/guestbook-page", "marionette", "backbone"],
 				spyOn($, "ajax");
 				gb.render();
 				var args = $.ajax.mostRecentCall.args[0]; 
-				expect(args.data.page).toEqual(1);
+				expect(args.data.page).toEqual(0);
 			});
 
 			it("renders the items when the ajax callback is issued", function() {

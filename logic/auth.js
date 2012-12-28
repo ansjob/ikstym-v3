@@ -3,9 +3,27 @@ var users = require("logic/models/users"),
 
 module.exports = {
 	authenticate: function(options, callback) {
+		if (!options.username && options.req) {
+			if (options.req.query) {
+				options.username = options.req.query.username;
+			}
+			if (!options.username && options.req.cookies) {
+				options.username = options.req.cookies.username;
+			}
+		}
+		if (!options.password && !options.ignorePassword && options.req) {
+			if (options.req.query) {
+				options.password = options.req.query.password;
+			}
+			if (!options.password && options.req.cookies) {
+				options.password = options.req.cookies.password;
+			}
+		}
+		options.username = options.username || "";
+		options.password = options.password || "";
 		if (options.ignorePassword) {
 			users.getByUsername(
-				options.username, 
+				options.username || "", 
 				function(error, user) {
 					callback(error, {
 						admin : user.admin ? true : false,

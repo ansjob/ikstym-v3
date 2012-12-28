@@ -4,7 +4,6 @@ var users = require("logic/models/users"),
 
 module.exports = {
 
-
 	insert : function(entry, callback) {
 		var sqlParams = {};
 		for (var propName in exports._properties) {
@@ -20,44 +19,8 @@ module.exports = {
 	},
 
 	getAll: function(callback) {
-		this.getFiltered(function(entry) {
-			return true;
-		}, callback);
-	},
-
-	getFiltered : function(filter, callback) {
-		db.all("select * from guestbook order by id desc", function (error, entries) {
-			var outstanding_reqs = 0, some_error, loop_done = false;
-			var filtered = [];
-			for (idx in entries) {
-				if (some_error) break;
-
-				//This needs to go in a function scope in order to capture
-				// the entry variable for the callback
-				(function() {
-				var entry = entries[idx];
-				if (filter(entry)) {
-					filtered.push(entry);
-					if (entry.username) {
-						delete entry.alias;
-						outstanding_reqs++;
-						users.getByUsername(entry.username,
-						function(error, user) {
-							some_error = some_error || error;
-							entry.userdata = user;
-							if (--outstanding_reqs == 0 && loop_done) {
-								callback(some_error, filtered);
-							}
-						});
-						delete entry.username;
-					}
-				}
-				})();
-			}
-			loop_done = true;
-			if (some_error || (outstanding_reqs == 0 && true))
-				callback(some_error, filtered);
-		});
+		var sql = "select * from guestbook order by id desc";
+		this.getFromSql(sql, callback);
 	},
 
 	deleteEntry: function(id, callback) {
@@ -66,8 +29,51 @@ module.exports = {
 	},
 
 	getPage : function(pageNum, callback) {
-		var sql = "select * from guestbook order by id desc limit {{limit}} offset {{offset}}".replace("{{offset}}", this.PAGE_SIZE * pageNum).replace("{{limit}}", this.PAGE_SIZE);
-		db.all(sql, callback);
+		var limit = this.PAGE_SIZE,
+			offset = parseInt(pageNum) || 0;
+		var sql = "select * from guestbook order by id desc limit {limit} offset {offset}"
+			.replace("{limit}", limit).replace("{offset}", offset);
+		this.getFromSql(sql, callback);
+	},
+
+	getSingleEntry : function(id, callback) {
+		id = parseInt(id);
+		if (id) {
+			var sql = "select * from guestbook where id = {id}".
+				replace("{id}", id);
+			this.getFromSql(sql, callback);
+		} else {
+			callback("Ogiltigt ID: " + id, null);
+		}
+	},
+
+	getFromSql : function(sql, callback) {
+		db.all(sql, function(error, entries) {
+			var outstanding = 0, some_error, loop_done = false;
+			for (var i in entries) {
+				if (some_error) break;
+				//This needs to go in a function scope in order to capture
+				// the entry variable for the callback
+				(function() {
+					var entry = entries[i];
+					if (entry.username) {
+						delete entry.alias;
+						outstanding++;
+						users.getByUsername(entry.username, function(u_error, user) {
+							some_error = some_error || u_error;
+							entry.userdata = user;
+							if(--outstanding == 0 && loop_done) {
+								callback(some_error, entries);
+							}
+						});
+					}
+				})();
+			}
+			loop_done = true;
+			if (some_error || outstanding == 0) {
+				callback(some_error, entries);
+			} 
+		});
 	},
 
 	PAGE_SIZE : 20

@@ -117,6 +117,49 @@ module.exports = {
 		var actual = auth.hash("test123");
 		test.equal(expected, actual);
 		test.done();
+	},
+
+	testAuthenticatingGETRequest : function(test) {
+		test.expect(4);
+		var request = {
+			query : {
+				username : "ansjob",
+				password : auth.hash("test123")
+			}
+		};
+		auth.authenticate({ req : request},
+			function(error, results) {
+				test.equal(null, error);
+				test.equal(true, results.authenticated);
+				test.equal(true, results.admin);
+				test.equal(false, results.locked);
+				test.done();
+			}
+		);
+	},
+
+	testAuthenticatingGETRequestUsingCookies : function(test) {
+		var request = {
+			query : {
+				foo : "bar",
+				xyz : 123
+			},
+			cookies : {
+				username : "ansjob",
+				password : auth.hash("test123")
+			}
+		};
+		test.expect(4);
+		auth.authenticate({ req : request},
+			function(error, results) {
+				test.equal(null, error);
+				test.equal(true, results.authenticated);
+				test.equal(true, results.admin);
+				test.equal(false, results.locked);
+				test.done();
+			}
+		);
+
 	}
 
 };

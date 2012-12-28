@@ -119,7 +119,7 @@ define([
 
 				var userData = $.parseJSON(localStorage.getItem("userdata"));
 				var fetchParameters = {
-					page: 1
+					page: 0
 				};
 				if (userData) {
 					fetchParameters.username = userData.username;
