@@ -1,13 +1,14 @@
 var dbLib = require("logic/db"),
+	rsvp = require("logic/models/rsvp"),
 	db = dbLib.db;
 
 module.exports = {
-	getAll : function(callback) {
+	getAll : function(options, callback) {
 		var sql = "select * from calendar order by start asc";
-		this.getFromSql(sql, callback);
+		this.getFromSql(sql, options, callback);
 	},
 
-	getFromSql : function(sql, callback) {
+	getFromSql : function(sql, options, callback) {
 		db.all(sql, callback);
 	},
 
@@ -39,7 +40,7 @@ module.exports = {
 		}
 		else {
 			var sql = "select * from calendar start where start >= $from and start <= $to order by start asc".replace("$from", from).replace("$to", to);
-			this.getFromSql(sql, callback);
+			this.getFromSql(sql, options, callback);
 		}
 	}, 
 
@@ -48,7 +49,9 @@ module.exports = {
 		if (!ev.title) return "Event måste ha en titel";
 		if (!ev.title) return "Event måste ha en titel";
 		if (!ev.location) return "Eventet måste ha en plats angiven";
-	}
+	},
+
+	rsvp : rsvp
 };
 
 exports._properties = {

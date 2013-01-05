@@ -10,20 +10,6 @@ dbLib.db = db;
 var calendar = require("logic/models/calendar"),
 	users = require("logic/models/users");
 
-var anonSample = {
-	text : "Some simple sample",
-	alias: "some name",
-	timestamp : new Date().getTime(),
-	ip: "127.0.0.1",
-};
-
-var loggedinSample = {
-	text : "Some wicked message",
-	timestamp : new Date().getTime(),
-	ip : "2001::123:31",
-	username : "ansjob"
-};
-
 var sampleUser = {
 	username: "ansjob",
 	password : "hash12345",
@@ -45,6 +31,15 @@ var sampleEvent = {
 	type : "TEST"
 };
 
+var sampleRSVP = {
+	event_id : 1,
+	username : "ansjob",
+	attending : true,
+	comment : "Foo comment",
+	guests : 3,
+	timestamp : new Date().getTime()
+};
+
 
 module.exports = {
 	setUp : function(cb) {
@@ -57,7 +52,7 @@ module.exports = {
 
 	testZeroExistInitially : function(test) {
 		test.expect(1);
-		calendar.getAll(function(error, entries) {
+		calendar.getAll({}, function(error, entries) {
 			test.equals(0, entries.length);
 			test.done();
 		});
@@ -70,7 +65,8 @@ module.exports = {
 
 		testOneIsInserted : function(test) {
 			test.expect(6 + 3);
-			calendar.getAll(function(error, entries) {
+			var getAllOpts = {};
+			calendar.getAll(getAllOpts, function(error, entries) {
 				test.equals(null, error);
 				test.equals(entries.length, 1);
 				for (var key in sampleEvent) {
@@ -103,7 +99,26 @@ module.exports = {
 				test.equals(0, events.length);
 				test.done();
 			});
+		},
 
-		}
+		withRSVP : {
+
+			setUp : function(cb) {
+				calendar.rsvp.insert(sampleRSVP, cb);
+			},
+
+			testGettingRSVP : function(test) {
+				test.expect(3);
+				calendar.rsvp.search({
+					event_id : 1
+				}, function(error, entries) {
+					test.equals(null, error);
+					test.equals(1, entries.length);
+					test.deepEqual(sampleRSVP, entries[0]);
+					test.done();
+				});
+			}
+		} 
 	},
+
 };
