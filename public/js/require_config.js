@@ -17,7 +17,7 @@ define([], function() {
 				deps : ["underscore"],
 				exports : 'Backbone'
 			},
-			'jquery.cookie' : {
+			'jquery.cookies' : {
 				deps : ["jquery"],
 				exports : "$"
 			}
