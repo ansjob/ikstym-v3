@@ -16,6 +16,16 @@ module.exports = {
 		db.run("delete from calendar where 1=1", callback);
 	},
 
+	getById : function(id, options, callback) {
+		id = parseInt(id);
+		if (id) {
+			var sql = "select * from calendar where id = " + id;
+			this.getFromSql(sql, options, callback);
+		} else {
+			callback("ID på ett event måste vara ett heltal");
+		}
+	},
+
 	insert : function(ev, callback) {
 		var error = this.validate(ev);
 		if (error) {

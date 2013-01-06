@@ -6,7 +6,8 @@ define(
 		"views/login-page",
 		"views/start-page",
 		"views/error_dialog",
-		"views/guestbook-page"
+		"views/guestbook-page",
+		"views/calendar"
 	]
 	,function(
 		Auth,
@@ -14,7 +15,8 @@ define(
 		LoginView,
 		StartView,
 		ErrorDialog,
-		Guestbook) {
+		Guestbook,
+		CalendarView) {
 
 	var DEBUGING_ROUTER = false;
 	var DEBUG = function(msg) {
@@ -42,6 +44,7 @@ define(
 			login		: "gotoLogin",
 			logout		: "logoutGotoStart",
 			guestbook	: "gotoGuestbook",
+			calendar	: "gotoCalendar",
 			''			: "gotoStart",
 			'*actions'	: "defaultAction"
 		},
@@ -80,6 +83,12 @@ define(
 
 		gotoGuestbook : function() {
 			var view = new Guestbook();
+			this.clearErrors();
+			this.mainRegion.show(view);
+		},
+
+		gotoCalendar : function() {
+			var view = new CalendarView();
 			this.clearErrors();
 			this.mainRegion.show(view);
 		},

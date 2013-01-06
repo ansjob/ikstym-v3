@@ -10,7 +10,8 @@ define([], function() {
 			"jquery"				: "lib/jquery-1.8.0.min",
 			"order"					: "lib/order",
 			"backbone.paginator"	: "lib/backbone.paginator.min",
-			"jquery.cookies"		: "lib/jquery.cookie"
+			"jquery.cookies"		: "lib/jquery.cookie",
+			"jquery.calendar"		: "lib/fullcalendar"
 		},
 		shim : {
 			'backbone' : {
@@ -18,6 +19,10 @@ define([], function() {
 				exports : 'Backbone'
 			},
 			'jquery.cookies' : {
+				deps : ["jquery"],
+				exports : "$"
+			},
+			'jquery.calendar' : {
 				deps : ["jquery"],
 				exports : "$"
 			}

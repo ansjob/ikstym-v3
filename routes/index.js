@@ -2,6 +2,7 @@ var utils = require("../logic/utils.js");
 var users = require("../logic/models/users.js");
 var auth = require("../logic/auth");
 var guestbook = require("../logic/models/guestbook");
+var calendar = require("../logic/models/calendar");
 exports.mappings = [ 
 	{
 		method: "get",
@@ -147,7 +148,6 @@ exports.mappings = [
 		method: "delete",
 		route: "/api/guestbook/:id?",
 		callback : function(req, res) {
-			console.log
 			if (req.route.params.id) {
 				auth.authenticate({
 					req : req
@@ -174,6 +174,41 @@ exports.mappings = [
 				res.status(400).send("Inget ID angett");
 			}
 		}
+	},
+
+// Calendar API (getting)
+	{
+		method : "get",
+		route : "/api/calendar",
+		callback : function(req, res) {
+			if (req.route.params.id) {
+				calendar.getById(req.route.params.id, {}, 
+				function(error, entries) {
+					if (error) res.status(500).send(error);
+					if (entries.length == 1) res.send(entries[0]);
+					else res.status(404).send("Kunde inte hitta eventet");
+				});
+			}
+			else {
+				calendar.getAll({}, function(error, entries) {
+					if (error) res.status(500).send(error);
+					else res.send(entries);
+				});
+			}
+		}
+	},
+
+	{
+		method : "get",
+		route : "/api/calendar/ical",
+		callback : function(req, res) {
+			calendar.getAll({}, function(error, entries) {
+				if (error) res.status(500).send(error);
+				else res.send(calendar.toIcal(entries));
+			});
+		}
 	}
+
+
 
 ];

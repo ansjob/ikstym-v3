@@ -2,14 +2,16 @@ define(["router", "backbone", "marionette",
 		"views/login-page",
 		"views/start-page",
 		"views/error_dialog",
-		"views/guestbook-page"
+		"views/guestbook-page",
+		"views/calendar"
 		], 
 
 	function(Router, Backbone, Marionette,
 		LoginView,
 		StartView,
 		ErrorDialog,
-		Guestbook) {
+		Guestbook,
+		CalendarView) {
 
 	return function() {
 
@@ -85,6 +87,12 @@ define(["router", "backbone", "marionette",
 			spyOn(Guestbook.prototype, "render");
 			router.navigate("guestbook", true);
 			expect(Guestbook.prototype.render).toHaveBeenCalled();
+		});
+
+		it("renders the calendar", function() {
+			spyOn(CalendarView.prototype, "render");
+			router.navigate("calendar", true);
+			expect(CalendarView.prototype.render).toHaveBeenCalled();
 		});
 
 	});
