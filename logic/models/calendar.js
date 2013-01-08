@@ -9,7 +9,18 @@ module.exports = {
 	},
 
 	getFromSql : function(sql, options, callback) {
-		db.all(sql, callback);
+		this.debug(2, "Getting SQL " + sql);
+		db.all(sql, function(error, entries) {
+			if (error) callback(error, null);
+			else {
+				if (options.fullcalendar) {
+					for (var i = 0; i < entries.length; ++i) {
+						entries[i].url = "#calendar/" + entries[i].id;
+					}
+				}
+				callback(null, entries);
+			}
+		});
 	},
 
 	deleteAll : function(callback) {
@@ -45,8 +56,8 @@ module.exports = {
 	getTimeInterval : function(options, callback) {
 		var from = parseInt(options.from);
 		var to = parseInt(options.to);
-		if (!from || !to) {
-			callback("Både från och till-datum måste anges");
+		if (isNaN(from) || isNaN(to)) {
+			callback("Både från och till-datum måste anges", null);
 		}
 		else {
 			var sql = "select * from calendar start where start >= $from and start <= $to order by start asc".replace("$from", from).replace("$to", to);
@@ -61,6 +72,11 @@ module.exports = {
 		if (!ev.location) return "Eventet måste ha en plats angiven";
 	},
 
+	debug : function(level, message) {
+		if (level <= exports.LOG_LEVEL)
+			console.log("\n[Calendar] " + message);
+	},
+
 	rsvp : rsvp
 };
 
@@ -73,6 +89,8 @@ exports._properties = {
 	"location"		: {type: "text"},
 	"type"			: {type: "text"},
 };
+
+exports.LOG_LEVEL = 0;
 
 var stmt = "create table if not exists calendar (";
 var idx = 0;

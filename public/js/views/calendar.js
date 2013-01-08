@@ -1,17 +1,21 @@
-define(["marionette", "backbone", "jquery.calendar", "text!templates/calendar.html"],
-	function(Marionette, Backbone, $, template) {
+define(["marionette", 
+	"auth",
+	"jquery.calendar",
+	"text!templates/calendar.html",
+	"text!templates/admin-panels/calendar.html"],
+	function(Marionette, Auth, $, template, AdminPanel) {
 
-	var CalendarView = Backbone.View.extend({
+	var CalendarView = Marionette.View.extend({
 
 		tagName : "div",
-		className: "row",
 
 		render : function() {
 			this.$el.html(template);
 			this.$el.find("#calendar").fullCalendar({
-				events: "api/calendar",
+				events: "api/calendar/fullcalendar",
 				firstDay: 1,
 				defaultView: "month",
+				
 				monthNames: 
 					["Januari", 
 						"Februari", 
@@ -28,6 +32,14 @@ define(["marionette", "backbone", "jquery.calendar", "text!templates/calendar.ht
 				dayNames: ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag"],
 				dayNamesShort: ["Sö", "Må", "Ti", "On", "To", "Fr", "Lö"]
 			});
+
+			if(Auth.isAdmin()) {
+				this.$el.find("#panel-container").html(AdminPanel);
+			}
+		},
+
+		onShow : function() {
+			this.$el.find("#calendar").fullCalendar("today");
 		}
 
 	});

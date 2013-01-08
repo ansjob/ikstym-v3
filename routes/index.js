@@ -90,7 +90,7 @@ exports.mappings = [
 							delete entry.userdata.password;
 						}
 					}
-					res.send(allEntries);
+					res.set("Cache-Control", "no-cache").send(allEntries);
 				});
 			});
 
@@ -185,7 +185,7 @@ exports.mappings = [
 				calendar.getById(req.route.params.id, {}, 
 				function(error, entries) {
 					if (error) res.status(500).send(error);
-					if (entries.length == 1) res.send(entries[0]);
+					else if (entries.length == 1) res.send(entries[0]);
 					else res.status(404).send("Kunde inte hitta eventet");
 				});
 			}
@@ -205,6 +205,21 @@ exports.mappings = [
 			calendar.getAll({}, function(error, entries) {
 				if (error) res.status(500).send(error);
 				else res.send(calendar.toIcal(entries));
+			});
+		}
+	},
+
+	{
+		method : "get",
+		route : "/api/calendar/fullcalendar",
+		callback : function(req, res) {
+			calendar.getTimeInterval({
+				fullcalendar : true,
+				from : req.query.start,
+				to : req.query.end
+			}, function(error, entries) {
+				if (error) res.status(500).send(error);
+				else res.send(entries);
 			});
 		}
 	}

@@ -46,6 +46,15 @@ define(["underscore", "jquery.cookies"], function(_) {
 			for (var key in userdata) {
 				$.cookie(key, userdata[key]);
 			}
+		},
+
+		isAdmin : function() {
+			var data = this.getUserData();
+			if (data == undefined) return false;
+			if (typeof(data.admin) === "string" 
+				&& data.admin.toLowerCase() == 'false') 
+				return false;
+			return data.admin;
 		}
 	};
 

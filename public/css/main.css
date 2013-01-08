@@ -32,3 +32,8 @@ h1, h2 {
 	color: #F80;
 }
 
+
+div#calendar {
+	width: 96%;
+	margin-left: 2%;
+}
