@@ -49,6 +49,10 @@ define(["views/calendar", "backbone", "auth", "jquery.calendar", "jquery.cookies
 					view.render();
 				});
 
+				afterEach(function() {
+					Auth.clearData();
+				});
+
 				it("does not render a control panel", function() {
 					expect(view.$el.find(".adminpanel").length).toEqual(0);
 				});
@@ -93,6 +97,10 @@ define(["views/calendar", "backbone", "auth", "jquery.calendar", "jquery.cookies
 						admin : "true"
 					});
 					view.render();
+				});
+
+				afterEach(function() {
+					Auth.clearData();
 				});
 
 				it("returns true on Auth.isAdmin()", function() {

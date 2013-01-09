@@ -37,8 +37,9 @@ define(["underscore"], function(_) {
 		},
 
 		getTimestamp : function(date) {
-			return new Date(date.year, date.month, date.date, date.hour, date.minute)
-				.getTime() / 1000 + DateUtils.offsetFromStockholm;
+			console.log("offset is " + DateUtils.offsetFromStockholm);
+			return (new Date(date.year, date.month, date.date, date.hour, date.minute)
+				.getTime() - DateUtils.offsetFromStockholm) / 1000;
 		}
 
 	};
