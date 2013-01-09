@@ -16,6 +16,16 @@ define(["underscore"], function(_) {
 				var date = DateUtils.offsetDate(timestamp);
 				return date.getDate();
 			},
+
+			hours : function(timestamp) {
+				var date = DateUtils.offsetDate(timestamp);
+				return date.getHours();
+			},
+
+			minute : function(timestamp) {
+				var date = DateUtils.offsetDate(timestamp);
+				return date.getMinutes();
+			}
 		},
 
 		offsetFromStockholm : function() {

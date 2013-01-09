@@ -18,6 +18,16 @@ define(["utils/date"], function(DateUtils) {
 				expect(DateUtils.timeStampTo.day(newYear)).toEqual(1);
 			});
 
+			it("can get the hour in sweden from a timestamp", function() {
+				expect(DateUtils.timeStampTo.hours(newYear)).toEqual(0);
+			});
+
+
+			it("can get the minute in sweden from a timestamp", function() {
+				expect(DateUtils.timeStampTo.minute(newYear)).toEqual(0);
+			});
+
+
 
 			it("can get year in sweden from a different timestamp", 
 			function() {
@@ -32,6 +42,14 @@ define(["utils/date"], function(DateUtils) {
 			it("can get day in sweden from a different timestamp", 
 			function() {
 				expect(DateUtils.timeStampTo.day(newYear-1)).toEqual(31);
+			});
+
+			it("can get the hour in sweden from a different timestamp", function() {
+				expect(DateUtils.timeStampTo.hours(newYear-1)).toEqual(23);
+			});
+
+			it("can get the minute in sweden from a different timestamp", function() {
+				expect(DateUtils.timeStampTo.minute(newYear-1)).toEqual(59);
 			});
 
 		});
