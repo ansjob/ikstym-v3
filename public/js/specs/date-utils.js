@@ -52,6 +52,39 @@ define(["utils/date"], function(DateUtils) {
 				expect(DateUtils.timeStampTo.minute(newYear-1)).toEqual(59);
 			});
 
+			describe("converting date to timestamp", function() {
+
+				var newyear, leapday;
+				beforeEach(function() {
+					newyear = {
+						year: 2013,
+						month	: 0,
+						date	: 1,
+						hour	: 0,
+						minute	: 0
+					};
+
+					leapday = {
+						year	: 2012,
+						month	: 1,
+						date	: 29,
+						hour	: 3,
+						minute	: 45
+					}
+				});
+
+				it("converts newyear to the correct timestamp", 
+				function() {
+					expect(DateUtils.getTimestamp(newyear)).toEqual(1356994800);
+				});
+
+				it("converts a leap day to the correct timestamp",
+				function() {
+					expect(DateUtils.getTimestamp(leapday)).toEqual(1330483500);
+				});
+
+			});
+
 		});
 
 	};

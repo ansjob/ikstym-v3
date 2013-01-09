@@ -34,6 +34,11 @@ define(["underscore"], function(_) {
 
 		offsetDate : function(timestamp) {
 			return new Date(timestamp*1000 + DateUtils.offsetFromStockholm);
+		},
+
+		getTimestamp : function(date) {
+			return new Date(date.year, date.month, date.date, date.hour, date.minute)
+				.getTime() / 1000 + DateUtils.offsetFromStockholm;
 		}
 
 	};
